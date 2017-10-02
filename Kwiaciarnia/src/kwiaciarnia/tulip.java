@@ -10,5 +10,9 @@ package kwiaciarnia;
  * @author trela_1103395
  */
 public class tulip extends flower{
+
+    public tulip() {
+        super(2, "Tulipan", 4.32);
+    }
     
 }
