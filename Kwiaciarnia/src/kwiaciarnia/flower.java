@@ -12,5 +12,32 @@ package kwiaciarnia;
 public class flower {
     int id;
     String name;
-    double value;
+    double price;
+    
+    public flower (int id, String name, double price) {
+        this.id = id;
+        this.name = name;
+        this.price = price;
+    }
+    
+    void setName (String name){
+        this.name = name;
+    }
+    String getName () {
+        return this.name;
+    }
+    void setPrice (double price) {
+        this.price = price; 
+    }
+    double getPrice (){
+        return this.price;
+    }
+    
+    void setId (int id) {
+        this.id = id;
+    }
+    
+    int getId (){
+        return this.id;
+    }
 }
