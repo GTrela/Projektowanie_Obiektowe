@@ -16,10 +16,11 @@ public class Kwiaciarnia {
     List<Purchase> Purchases;
 
     public void BuyProduct(int ClientId, HashMap<Product, Integer> Products) {
-
     }
 
     public static void main(String[] args) {
+        client Janusz = new client(1,"Janusz");
+        client Marian = new client(2,"Marian");
     }
     
 }
