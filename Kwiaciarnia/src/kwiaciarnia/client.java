@@ -1,15 +1,30 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package kwiaciarnia;
 
 /**
- *
- * @author trela_1103395
+ * Created by Grzegorz Trela on 09.10.17.
  */
-public interface client {
-   public boolean buyFlower (int flowerId, int amount);
-   public boolean buyNutrient (int nutrientId, int amount);
+public class client {
+    private int id;
+    private String name;
+
+    public client(int id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 }
