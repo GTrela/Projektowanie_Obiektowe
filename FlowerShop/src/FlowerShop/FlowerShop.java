@@ -20,8 +20,16 @@ public class FlowerShop
     {
         double sum = 0.0;
 
+        if (time2.before(time1))
+        {
+            Timestamp temp_time = time1;
+            time1 = time2;
+            time2 = temp_time;
+        }
+
         for (Purchase purchase : Purchases)
         {
+
             if (purchase.PurchaseDate.equals(time1) || purchase.PurchaseDate.equals(time2) || (purchase.PurchaseDate.after(time1) && purchase.PurchaseDate.before(time2)))
             {
                 sum += purchase.Total;
