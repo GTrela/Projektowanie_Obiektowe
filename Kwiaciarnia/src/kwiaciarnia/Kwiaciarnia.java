@@ -5,17 +5,21 @@
  */
 package kwiaciarnia;
 
+import java.util.HashMap;
+import java.util.List;
+
 /**
  *
- * @author trela_1103395
+ * @author Grzegorz Trela
  */
 public class Kwiaciarnia {
+    List<Purchase> Purchases;
 
-    /**
-     * @param args the command line arguments
-     */
+    public void BuyProduct(int ClientId, HashMap<Product, Integer> Products) {
+
+    }
+
     public static void main(String[] args) {
-        // TODO code application logic here
     }
     
 }
