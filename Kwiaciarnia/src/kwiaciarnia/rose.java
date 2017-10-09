@@ -9,7 +9,7 @@ package kwiaciarnia;
  *
  * @author trela_1103395
  */
-public class rose extends flower {
+public class rose extends Product {
 
     public rose() {
         super(1, "Roza", 8.64);
