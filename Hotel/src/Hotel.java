@@ -1,18 +1,26 @@
 import java.util.HashMap;
 import java.util.List;
 import java.io.*;
-
+import java.util.Map;
 
 class Hotel
 {
-    public HashMap<Long, Room> Rooms;
+    public Map<Long, Room> Rooms = new HashMap<>();
+    public Map<Long, Client> Clients = new HashMap<>();
+    private String path = "";
 
-    public void loadRooms(String path)
+    void setPath(String path)
+    {
+        this.path = path;
+    }
+
+    void loadRooms()
     {
         String line = "";
         String cvsSplitBy = ",";
+        String roomsPath = path + "rooms.csv";
 
-        try (BufferedReader br = new BufferedReader(new FileReader(path)))
+        try (BufferedReader br = new BufferedReader(new FileReader(roomsPath)))
         {
             Rooms = new HashMap<>();
             while ((line = br.readLine()) != null)
@@ -32,14 +40,13 @@ class Hotel
         }
     }
 
-
-    void saveRooms(String path)
+    void saveRooms()
     {
         StringBuilder builder = new StringBuilder();
-        FileWriter outFile = null;
-        try
+        String roomsPath = path + "rooms.csv";
+
+        try (FileWriter outFile = new FileWriter(roomsPath))
         {
-            outFile = new FileWriter(path);
             for (Room room : Rooms.values())
             {
                 builder.append(room.getNr());
@@ -50,13 +57,11 @@ class Hotel
                 builder.append('\n');
             }
             outFile.write(builder.toString());
-            outFile.close();
         }
-        catch (Exception e)
+        catch (IOException e)
         {
             e.printStackTrace();
         }
-
     }
 
     void addRoom(long number, long nOfBeds, String description)
@@ -68,6 +73,67 @@ class Hotel
     void deleteRoom(long number)
     {
         Rooms.remove(number);
+    }
+
+    void loadClients()
+    {
+        String line = "";
+        String cvsSplitBy = ",";
+        String clientsPath = path + "clients.csv";
+
+        try (BufferedReader br = new BufferedReader(new FileReader(clientsPath)))
+        {
+            Clients = new HashMap<>();
+            while ((line = br.readLine()) != null)
+            {
+                String[] clientParam = line.split(cvsSplitBy);
+                if (clientParam.length == 3)
+                {
+                    Client client = new Client(Long.parseLong(clientParam[0]), clientParam[1], clientParam[2]);
+                    Clients.put(Long.parseLong(clientParam[0]), client);
+                }
+            }
+
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+    }
+
+    void saveClients()
+    {
+        StringBuilder builder = new StringBuilder();
+        String clientsPath = path + "clients.csv";
+
+        try (FileWriter outFile = new FileWriter(clientsPath))
+        {
+            for (Client client : Clients.values())
+            {
+                builder.append(client.getId());
+                builder.append(",");
+                builder.append(client.getName());
+                builder.append(",");
+                builder.append(client.getSurname());
+                builder.append('\n');
+            }
+            outFile.write(builder.toString());
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+    }
+
+    void addClient(long id, String name, String surname)
+    {
+        Client client = new Client(id, name, surname);
+        Clients.put(id, client);
+    }
+
+    void deleteClient(long id)
+    {
+        Clients.remove(id);
     }
 
     //rooms jest listą liczb określających ile osób chcemy zakwaterować w pokoju
