@@ -1,29 +1,51 @@
 class Room
 {
-    long nr;
-    long nOfBeds;
-    String description;
+	long nr;
+	long nOfBeds;
+	String description;
+	Comfort comfort;
 
-    public Room(long nr, long nOfBeds, String description)
-    {
-        this.nr = nr;
-        this.nOfBeds = nOfBeds;
-        this.description = description;
-    }
+	public Room(long nr, long nOfBeds, String description, Comfort comfort)
+	{
+		this.nr = nr;
+		this.nOfBeds = nOfBeds;
+		this.description = description;
+		this.comfort = comfort;
+	}
 
-    public long getNr()
-    {
-        return nr;
-    }
+	public Room(long nr, long nOfBeds, String description)
+	{
+		this.nr = nr;
+		this.nOfBeds = nOfBeds;
+		this.description = description;
+		this.comfort = Comfort.standardowy;
+	}
 
-    public long getnOfBeds()
-    {
-        return nOfBeds;
-    }
+	public Room(long nr, long nOfBeds)
+	{
+		this.nr = nr;
+		this.nOfBeds = nOfBeds;
+		this.description = "";
+		this.comfort = Comfort.standardowy;
+	}
 
-    public String getDescription()
-    {
-        return description;
-    }
+	public long getNr()
+	{
+		return nr;
+	}
 
+	public long getnOfBeds()
+	{
+		return nOfBeds;
+	}
+
+	public String getDescription()
+	{
+		return description;
+	}
+
+	public Comfort getComfort()
+	{
+		return comfort;
+	}
 }

@@ -2,9 +2,8 @@ public class Main
 {
     public static void main(String[] args)
     {
-        Hotel hotel = new Hotel();
-        hotel.setPath("out/production/Hotel/");
-        hotel.loadClients();
+        Hotel hotel = new Hotel("out/production/Hotel/");
+        //hotel.loadClients();
         hotel.loadRooms();
         //hotel.addRoom(100,3,"Testowy pokoj");
         //hotel.addRoom(121,2,"Testowy ziemniak");
@@ -13,9 +12,10 @@ public class Main
         //hotel.addClient(2,"Grzegorz","Trela");
         //hotel.saveClients();
 
-        for (Room room : hotel.Rooms.values())
+        for (Room room : hotel.getRooms().values())
         {
-            System.out.println(room.getNr() + " " + room.getnOfBeds() + " " + room.getDescription());
+            System.out.printf("Room nr: %d, Beds number: %d, Description: %s, Comfort: %s\n",
+                    room.getNr(),room.getnOfBeds(),room.getDescription(),room.getComfort());
         }
     }
 }
