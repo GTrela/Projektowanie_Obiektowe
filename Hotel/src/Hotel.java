@@ -2,6 +2,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -10,13 +11,17 @@ class Hotel
 {
 	private Map<Long, Room> Rooms;
 	private Map<Long, Client> Clients;
+	private Map<Long, Reservation> Reservations;
+	private Map<String, SeasonalFee> SeasonalFees;
 	private String path = "";
 
 	public Hotel(String path)
 	{
-		this.path = path;
+		setPath(path);
 		Clients = new HashMap<>();
 		Rooms = new HashMap<>();
+		Reservations = new HashMap<>();
+		SeasonalFees = new HashMap<>();
 	}
 
 	public void setPath(String path)
@@ -24,6 +29,7 @@ class Hotel
 		this.path = path;
 	}
 
+	// Room management
 	public void loadRooms()
 	{
 		String line = "";
@@ -86,6 +92,7 @@ class Hotel
 		Rooms.remove(number);
 	}
 
+	// Client management
 	public void loadClients()
 	{
 		String line = "";
@@ -147,25 +154,157 @@ class Hotel
 		Clients.remove(id);
 	}
 
-	//rooms jest listą liczb określających ile osób chcemy zakwaterować w pokoju
-	//np.: { 1, 2} oznacza, że potrzebujemy pokoju dla jednej osoby i drugiego pokoju dla dwu osób.
-	public List<ReservationInfo> findFreeRooms(Period period, List<Integer> rooms)
+	// Reservation management
+	public void loadReservations()
 	{
-		return null;
+		String line = "";
+		String cvsSplitBy = ",";
+		String reservationsPath = path + "reservations.csv";
+
+		try (BufferedReader br = new BufferedReader(new FileReader(reservationsPath)))
+		{
+			Reservations = new HashMap<>();
+			while ((line = br.readLine()) != null)
+			{
+				String[] reservationParam = line.split(cvsSplitBy);
+				if (reservationParam.length == 6)
+				{
+					Reservation reservation = new Reservation(Long.parseLong(reservationParam[0]), LocalDate.parse(reservationParam[1]), LocalDate.parse(reservationParam[2]), Long.parseLong(reservationParam[3]), Long.parseLong(reservationParam[4]), Double.parseDouble(reservationParam[5]));
+					Reservations.put(Long.parseLong(reservationParam[0]), reservation);
+				}
+			}
+
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+		}
 	}
 
-	public boolean makeReservation(Client client, ReservationInfo request)
+	public void saveReservations()
 	{
-		return false;
+		StringBuilder builder = new StringBuilder();
+		String reservationsPath = path + "reservations.csv";
+
+		try (FileWriter outFile = new FileWriter(reservationsPath))
+		{
+			for (Reservation reservation : Reservations.values())
+			{
+				builder.append(reservation.getId());
+				builder.append(",");
+				builder.append(reservation.getCheckInDate());
+				builder.append(",");
+				builder.append(reservation.getCheckOutDate());
+				builder.append(",");
+				builder.append(reservation.getClientId());
+				builder.append(",");
+				builder.append(reservation.getRoomNr());
+				builder.append(",");
+				builder.append(reservation.getTotalPrice());
+				builder.append('\n');
+			}
+			outFile.write(builder.toString());
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+		}
 	}
 
+	private double calculateTotalPrice(LocalDate checkInDate, LocalDate checkOutDate, long clientId, long roomNr)
+	{
+		return 2.3;
+	}
+
+	public void addReservation(long id, LocalDate checkInDate, LocalDate checkOutDate, long clientId, long roomNr)
+	{
+		Reservation reservation = new Reservation(id, checkInDate, checkOutDate, clientId, roomNr, Double.parseDouble("222.30"));
+		Reservations.put(id, reservation);
+	}
+
+	public void deleteReservation(long id)
+	{
+		Reservations.remove(id);
+	}
+
+	// SeasonalFee management
+	public void loadSeasonalFees()
+	{
+		String line = "";
+		String cvsSplitBy = ",";
+		String seasonalFeePath = path + "seasonalfees.csv";
+
+		try (BufferedReader br = new BufferedReader(new FileReader(seasonalFeePath)))
+		{
+			while ((line = br.readLine()) != null)
+			{
+				String[] seasonalfeeParam = line.split(cvsSplitBy);
+				if (seasonalfeeParam.length == 4)
+				{
+					SeasonalFee seasonalFee = new SeasonalFee(seasonalfeeParam[0], LocalDate.parse(seasonalfeeParam[1]), LocalDate.parse(seasonalfeeParam[2]), Double.parseDouble(seasonalfeeParam[3]));
+					SeasonalFees.put(seasonalfeeParam[0], seasonalFee);
+				}
+			}
+
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+	}
+
+	public void saveSeasonalFees()
+	{
+		StringBuilder builder = new StringBuilder();
+		String seasonalFeePath = path + "seasonalfees.csv";
+
+		try (FileWriter outFile = new FileWriter(seasonalFeePath))
+		{
+			for (SeasonalFee seasonalFee : SeasonalFees.values())
+			{
+				builder.append(seasonalFee.getEventName());
+				builder.append(",");
+				builder.append(seasonalFee.getStartDate());
+				builder.append(",");
+				builder.append(seasonalFee.getEndDate());
+				builder.append(",");
+				builder.append(seasonalFee.getFee());
+				builder.append('\n');
+			}
+			outFile.write(builder.toString());
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+	}
+
+	public void addSeasonalFee(String eventName, LocalDate startDate, LocalDate endDate, double fee)
+	{
+		SeasonalFee seasonalFee = new SeasonalFee(eventName, startDate, endDate, fee);
+		SeasonalFees.put(eventName, seasonalFee);
+	}
+
+	public void deleteSeasonalFee(String eventName)
+	{
+		SeasonalFees.remove(eventName);
+	}
+
+	// Getters
 	public Map<Long, Room> getRooms()
 	{
 		return Rooms;
 	}
-
 	public Map<Long, Client> getClients()
 	{
 		return Clients;
+	}
+	public Map<Long, Reservation> getReservations()
+	{
+		return Reservations;
+	}
+	public Map<String, SeasonalFee> getSeasonalFees()
+	{
+		return SeasonalFees;
 	}
 }
