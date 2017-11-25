@@ -1,4 +1,4 @@
-class Room
+class Room implements Comparable<Room>
 {
 	long nr;
 	long nOfBeds;
@@ -47,5 +47,11 @@ class Room
 	public Comfort getComfort()
 	{
 		return comfort;
+	}
+
+	@Override
+	public int compareTo(Room roomO)
+	{
+		return Long.compare(this.getnOfBeds(), roomO.getnOfBeds());
 	}
 }

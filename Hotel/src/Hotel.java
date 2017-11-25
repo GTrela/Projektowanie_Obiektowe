@@ -3,10 +3,8 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 class Hotel
 {
@@ -222,16 +220,96 @@ class Hotel
 		}
 	}
 
+	public Map<Long, Room> sortRoomsByBeds(Map<Long, Room> roomsToSort)
+	{
+		List<Map.Entry<Long, Room>> list = new LinkedList<>(roomsToSort.entrySet());
+
+		Collections.sort(list, new Comparator<Map.Entry<Long, Room>>()
+		{
+			public int compare(Map.Entry<Long, Room> o1, Map.Entry<Long, Room> o2)
+			{
+				return (o2.getValue()).compareTo(o1.getValue());
+			}
+		});
+
+		Map<Long, Room> sortedMap = new LinkedHashMap<>();
+
+		for (Map.Entry<Long, Room> entry : list)
+		{
+			sortedMap.put(entry.getKey(), entry.getValue());
+		}
+
+		return sortedMap;
+	}
+
+	public boolean isDateWithinRange(LocalDate startDate, LocalDate endDate, LocalDate dateToCheck)
+	{
+		return !(dateToCheck.isBefore(startDate) || dateToCheck.isAfter(endDate));
+	}
+
+	public List<Long> getFreeRooms(LocalDate startDate, LocalDate endDate)
+	{
+		List<Long> rooms = new ArrayList<>(Rooms.keySet());
+
+		for (Reservation reservation : Reservations.values())
+		{
+			LocalDate checkIn = reservation.getCheckInDate();
+			LocalDate checkOut = reservation.getCheckOutDate();
+
+			if (isDateWithinRange(checkIn, checkOut, startDate) || isDateWithinRange(checkIn, checkOut, endDate))
+			{
+				List<Long> resRooms = new ArrayList<>(reservation.getRoomsList());
+
+				for (Long roomNr : resRooms)
+				{
+					if (rooms.contains(roomNr))
+					{
+						rooms.remove(roomNr);
+					}
+				}
+			}
+		}
+
+		return rooms;
+	}
+
+	public Map<Long, Room> selectRooms(List<Long> roomsList, long nOfBeds)
+	{
+		Map<Long, Room> tempRooms = new HashMap<>();
+		Map<Long, Room> selectedRooms = new HashMap<>();
+		long beds = nOfBeds;
+
+		for (Long roomNr : roomsList)
+		{
+			tempRooms.put(roomNr, Rooms.get(roomNr));
+		}
+
+		for (Map.Entry<Long, Room> entry : tempRooms.entrySet())
+		{
+			Long availableBeds = entry.getValue().getnOfBeds();
+
+			if (beds > 0)
+			{
+				selectedRooms.put(entry.getKey(), entry.getValue());
+				beds -= availableBeds;
+			}
+		}
+
+		return selectedRooms;
+	}
+
 	private double calculateTotalPrice(LocalDate checkInDate, LocalDate checkOutDate, long clientId, List<Long> roomsList)
 	{
 		return 2.3;
 	}
 
-	public Reservation checkReservation(LocalDate checkInDate, LocalDate checkOutDate, long clientId, long nofBeds)
+	public Reservation checkReservation(LocalDate checkInDate, LocalDate checkOutDate, long clientId, long nOfBeds)
 	{
-		List<Long> roomlist = new ArrayList<>();
+
+		List<Long> roomList = new ArrayList<>();
+
 		double totalPrice = 0.0;
-		return new Reservation(1, checkInDate, checkOutDate, clientId, totalPrice, roomlist);
+		return new Reservation(1, checkInDate, checkOutDate, clientId, totalPrice, roomList);
 	}
 
 	public void addReservation(long id, LocalDate checkInDate, LocalDate checkOutDate, long clientId, List<Long> roomsList)
