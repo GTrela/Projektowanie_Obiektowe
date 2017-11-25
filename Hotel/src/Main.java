@@ -1,6 +1,8 @@
 import java.time.LocalDate;
 import java.time.Month;
 import java.time.Period;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Main
 {
@@ -19,9 +21,15 @@ public class Main
         //hotel.addClient(1,"Jakub","Jas");
         //hotel.addClient(2,"Grzegorz","Trela");
         //hotel.saveClients();
+	    List<Long> roomsIdList = new ArrayList<>();
+	    roomsIdList.add(new Long(2));
+	    roomsIdList.add(new Long(20));
+	    roomsIdList.add(new Long(999));
 
-        //hotel.addReservation(1, LocalDate.of(2016, Month.NOVEMBER, 9), LocalDate.of(2016, Month.NOVEMBER, 20), 1,100);
-        //hotel.saveReservations();
+
+	    hotel.addReservation(1, LocalDate.of(2016, Month.NOVEMBER, 9),
+			    LocalDate.of(2016, Month.NOVEMBER, 20), 1, roomsIdList);
+	    hotel.saveReservations();
         /*for (Room room : hotel.getRooms().values())
         {
             System.out.printf("Room nr: %d, Beds number: %d, Description: %s, Comfort: %s\n",

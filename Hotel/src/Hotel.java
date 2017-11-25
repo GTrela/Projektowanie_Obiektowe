@@ -3,6 +3,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -167,9 +168,16 @@ class Hotel
 			while ((line = br.readLine()) != null)
 			{
 				String[] reservationParam = line.split(cvsSplitBy);
-				if (reservationParam.length == 6)
+				if (reservationParam.length > 5)
 				{
-					Reservation reservation = new Reservation(Long.parseLong(reservationParam[0]), LocalDate.parse(reservationParam[1]), LocalDate.parse(reservationParam[2]), Long.parseLong(reservationParam[3]), Long.parseLong(reservationParam[4]), Double.parseDouble(reservationParam[5]));
+					List<Long> roomsIdList = new ArrayList<>();
+					for (int i = 5; i < reservationParam.length; i++)
+					{
+						roomsIdList.add(Long.parseLong(reservationParam[i]));
+					}
+
+					Reservation reservation = new Reservation(Long.parseLong(reservationParam[0]), LocalDate.parse(reservationParam[1]),
+							LocalDate.parse(reservationParam[2]), Long.parseLong(reservationParam[3]), Double.parseDouble(reservationParam[4]), roomsIdList);
 					Reservations.put(Long.parseLong(reservationParam[0]), reservation);
 				}
 			}
@@ -198,9 +206,12 @@ class Hotel
 				builder.append(",");
 				builder.append(reservation.getClientId());
 				builder.append(",");
-				builder.append(reservation.getRoomNr());
-				builder.append(",");
 				builder.append(reservation.getTotalPrice());
+				for (Long item : reservation.getRoomsList())
+				{
+					builder.append(",");
+					builder.append(item);
+				}
 				builder.append('\n');
 			}
 			outFile.write(builder.toString());
@@ -211,14 +222,21 @@ class Hotel
 		}
 	}
 
-	private double calculateTotalPrice(LocalDate checkInDate, LocalDate checkOutDate, long clientId, long roomNr)
+	private double calculateTotalPrice(LocalDate checkInDate, LocalDate checkOutDate, long clientId, List<Long> roomsList)
 	{
 		return 2.3;
 	}
 
-	public void addReservation(long id, LocalDate checkInDate, LocalDate checkOutDate, long clientId, long roomNr)
+	public Reservation checkReservation(LocalDate checkInDate, LocalDate checkOutDate, long clientId, long nofBeds)
 	{
-		Reservation reservation = new Reservation(id, checkInDate, checkOutDate, clientId, roomNr, Double.parseDouble("222.30"));
+		List<Long> roomlist = new ArrayList<>();
+		double totalPrice = 0.0;
+		return new Reservation(1, checkInDate, checkOutDate, clientId, totalPrice, roomlist);
+	}
+
+	public void addReservation(long id, LocalDate checkInDate, LocalDate checkOutDate, long clientId, List<Long> roomsList)
+	{
+		Reservation reservation = new Reservation(id, checkInDate, checkOutDate, clientId, Double.parseDouble("222.30"), roomsList);
 		Reservations.put(id, reservation);
 	}
 

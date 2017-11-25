@@ -1,4 +1,5 @@
 import java.time.LocalDate;
+import java.util.List;
 
 class Reservation
 {
@@ -6,16 +7,16 @@ class Reservation
     LocalDate checkInDate;
     LocalDate checkOutDate;
     long clientId;
-    long roomNr;
+    List<Long> roomsList;
     double totalPrice;
 
-    public Reservation(long id, LocalDate checkInDate, LocalDate checkOutDate, long clientId, long roomNr, double totalPrice)
+    public Reservation(long id, LocalDate checkInDate, LocalDate checkOutDate, long clientId, double totalPrice, List<Long> roomsList)
     {
         this.id = id;
         this.checkInDate = checkInDate;
         this.checkOutDate = checkOutDate;
         this.clientId = clientId;
-        this.roomNr = roomNr;
+        this.roomsList = roomsList;
         this.totalPrice = totalPrice;
     }
 
@@ -39,9 +40,9 @@ class Reservation
         return clientId;
     }
 
-    public long getRoomNr()
+    public List<Long> getRoomsList()
     {
-        return roomNr;
+        return roomsList;
     }
 
     public double getTotalPrice()
