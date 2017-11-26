@@ -20,14 +20,14 @@ public class Main
                     room.getNr(),room.getnOfBeds(),room.getDescription(),room.getComfort());
         }
 
-        //create saple clients
+        //create sample clients
 	    hotel.addClient("Jakub","Jas");
 	    hotel.addClient("Grzegorz","Trela");
 
 	    hotel.addSeasonalFee("sezon grzewczy",LocalDate.of(2017, Month.DECEMBER, 1),
 			    LocalDate.of(2017, Month.DECEMBER, 31),1.5);
 
-	    // przykładowa rezerwacja
+	    // sample reservation
 	    Reservation test = hotel.checkReservation(1,LocalDate.of(2017, Month.DECEMBER, 20),
 			    LocalDate.of(2017, Month.DECEMBER, 22),5);
 
@@ -93,5 +93,6 @@ public class Main
 
             System.out.println(date);
           }*/
+        hotel.saveConf();
     }
 }

@@ -1,7 +1,4 @@
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -27,11 +24,9 @@ class Hotel
 		Init();
 	}
 
-	public void Init ()
+	public void Init()
 	{
-		reservationNumber = 1;
-		roomNumber = 1;
-		clientNumber = 1;
+		loadConf();
 //		loadClients();
 //		loadRooms();
 //		loadReservations();
@@ -41,6 +36,63 @@ class Hotel
 	public void setPath(String path)
 	{
 		this.path = path;
+	}
+
+	// Configuration management
+	public void loadConf()
+	{
+		String line = "";
+		String cvsSplitBy = ",";
+		String confPath = path + "conf.csv";
+
+		File f = new File(confPath);
+
+		if (f.exists() && !f.isDirectory())
+		{
+			try (BufferedReader br = new BufferedReader(new FileReader(confPath)))
+			{
+				if ((line = br.readLine()) != null)
+				{
+					String[] confParam = line.split(cvsSplitBy);
+					if (confParam.length == 3)
+					{
+						reservationNumber = Long.parseLong(confParam[0]);
+						roomNumber = Long.parseLong(confParam[1]);
+						clientNumber = Long.parseLong(confParam[2]);
+					}
+				}
+			}
+			catch (IOException e)
+			{
+				e.printStackTrace();
+			}
+		}
+		else
+		{
+			reservationNumber = 1;
+			roomNumber = 1;
+			clientNumber = 1;
+		}
+	}
+
+	public void saveConf()
+	{
+		StringBuilder builder = new StringBuilder();
+		String confPath = path + "conf.csv";
+
+		try (FileWriter outFile = new FileWriter(confPath))
+		{
+			builder.append(reservationNumber);
+			builder.append(",");
+			builder.append(roomNumber);
+			builder.append(",");
+			builder.append(clientNumber);
+			outFile.write(builder.toString());
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+		}
 	}
 
 	// Room management
