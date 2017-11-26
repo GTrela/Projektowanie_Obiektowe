@@ -307,6 +307,8 @@ class Hotel
 			tempRooms.put(roomNr, Rooms.get(roomNr));
 		}
 
+		tempRooms = sortRoomsByBeds(tempRooms);
+
 		for (Map.Entry<Long, Room> entry : tempRooms.entrySet())
 		{
 			Long availableBeds = entry.getValue().getnOfBeds();
@@ -386,7 +388,7 @@ class Hotel
 	public Reservation checkReservation(long clientId, LocalDate checkInDate, LocalDate checkOutDate, long nOfBeds)
 	{
 		List<Long> roomList = getFreeRooms(checkInDate, checkOutDate);
-		Map<Long, Room> roomMap = sortRoomsByBeds(selectRooms(roomList, nOfBeds));
+		Map<Long, Room> roomMap = selectRooms(roomList, nOfBeds);
 		List<Long> roomsIds = new ArrayList<>(roomMap.keySet());
 		double totalPrice = calculateTotalPrice(checkInDate, checkOutDate, clientId, roomsIds);
 		return new Reservation(reservationNumber++, checkInDate, checkOutDate, clientId, totalPrice, roomsIds);
