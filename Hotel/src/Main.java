@@ -8,19 +8,49 @@ public class Main
     public static void main(String[] args)
     {
         Hotel hotel = new Hotel("out/production/Hotel/");
-        hotel.loadClients();
-        hotel.loadRooms();
-        hotel.loadReservations();
-        hotel.loadSeasonalFees();
-
-        Map<Long, Room> test = hotel.selectRooms(hotel.getFreeRooms(LocalDate.of(2016, Month.NOVEMBER, 22), LocalDate.of(2016, Month.NOVEMBER, 25)), 2);
-
-        for(Map.Entry<Long,Room> entry : test.entrySet()) {
-            Long key = entry.getKey();
-            Room value = entry.getValue();
-
-            System.out.println(key + " => " + value.getnOfBeds());
+	    // create sample rooms
+		hotel.addRoom(1,"Pokój testowy", Comfort.luksusowy);
+	    hotel.addRoom(3,"Pokój testowy 2", Comfort.luksusowy);
+	    hotel.addRoom(2,"Pokój zwykły 1", Comfort.standardowy);
+	    hotel.addRoom(4,"Pokój zwykły 2", Comfort.standardowy);
+	    hotel.addRoom(4,"Pokój zwykły 3", Comfort.standardowy);
+	    for (Room room : hotel.getRooms().values())
+        {
+            System.out.printf("Room nr: %d, Beds number: %d, Description: %s, Comfort: %s\n",
+                    room.getNr(),room.getnOfBeds(),room.getDescription(),room.getComfort());
         }
+
+        //create saple clients
+	    hotel.addClient("Jakub","Jas");
+	    hotel.addClient("Grzegorz","Trela");
+
+	    hotel.addSeasonalFee("sezon grzewczy",LocalDate.of(2017, Month.DECEMBER, 1),
+			    LocalDate.of(2017, Month.DECEMBER, 31),1.5);
+
+	    // przykładowa rezerwacja
+	    Reservation test = hotel.checkReservation(1,LocalDate.of(2017, Month.DECEMBER, 20),
+			    LocalDate.of(2017, Month.DECEMBER, 22),5);
+
+	    long reservationId = hotel.addReservation(test);
+
+	    test = hotel.getReservations().get(reservationId);
+
+		System.out.println("Zarezerwowano pokoje o następujących id:");
+		for (Long roomId : test.getRoomsList())
+		{
+			System.out.println(roomId);
+		}
+	    System.out.printf("Całkowita cena to: %.2f zł",test.totalPrice);
+
+
+        //Map<Long, Room> test = hotel.selectRooms(hotel.getFreeRooms(LocalDate.of(2016, Month.NOVEMBER, 22), LocalDate.of(2016, Month.NOVEMBER, 25)), 2);
+
+//        for(Map.Entry<Long,Room> entry : test.entrySet()) {
+//            Long key = entry.getKey();
+//            Room value = entry.getValue();
+//
+//            System.out.println(key + " => " + value.getnOfBeds());
+//        }
 
         //System.out.print(hotel.selectRooms(hotel.getFreeRooms(LocalDate.of(2016, Month.NOVEMBER, 10), LocalDate.of(2016, Month.NOVEMBER, 25)), 4));
         /*Map<Long, Room> test = hotel.sortRoomsByBeds(hotel.getRooms());
@@ -35,8 +65,6 @@ public class Main
         //System.out.println(hotel.getFreeRooms());
         //hotel.addSeasonalFee("Sezon wakacyjny", LocalDate.of(0, Month.JUNE, 19), LocalDate.of(0, Month.SEPTEMBER, 1), 25);
         //hotel.saveSeasonalFees();
-        //hotel.addRoom(130,3,"Pokój testowy", Comfort.luksusowy);
-        //hotel.addRoom(121,2,"Pokój zwykły", Comfort.standardowy);
         //hotel.saveRooms();
         //hotel.addClient(1,"Jakub","Jas");
         //hotel.addClient(2,"Grzegorz","Trela");
@@ -50,11 +78,7 @@ public class Main
 	    hotel.addReservation(2, LocalDate.of(2016, Month.NOVEMBER, 9),
 			    LocalDate.of(2016, Month.NOVEMBER, 20), 1, roomsIdList);
 	    hotel.saveReservations();*/
-        /*for (Room room : hotel.getRooms().values())
-        {
-            System.out.printf("Room nr: %d, Beds number: %d, Description: %s, Comfort: %s\n",
-                    room.getNr(),room.getnOfBeds(),room.getDescription(),room.getComfort());
-        }*/
+
 
         /*for (Reservation reservation : hotel.getReservations().values())
         {

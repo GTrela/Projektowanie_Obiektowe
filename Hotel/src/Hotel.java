@@ -13,6 +13,9 @@ class Hotel
 	private Map<Long, Reservation> Reservations;
 	private Map<String, SeasonalFee> SeasonalFees;
 	private String path = "";
+	private long reservationNumber;
+	private long roomNumber;
+	private long clientNumber;
 
 	public Hotel(String path)
 	{
@@ -21,6 +24,18 @@ class Hotel
 		Rooms = new HashMap<>();
 		Reservations = new HashMap<>();
 		SeasonalFees = new HashMap<>();
+		Init();
+	}
+
+	public void Init ()
+	{
+		reservationNumber = 1;
+		roomNumber = 1;
+		clientNumber = 1;
+//		loadClients();
+//		loadRooms();
+//		loadReservations();
+//		loadSeasonalFees();
 	}
 
 	public void setPath(String path)
@@ -80,10 +95,11 @@ class Hotel
 		}
 	}
 
-	public void addRoom(long number, long nOfBeds, String description, Comfort comfort)
+	public long addRoom (long nOfBeds, String description, Comfort comfort)
 	{
-		Room room = new Room(number, nOfBeds, description, comfort);
-		Rooms.put(number, room);
+		Room room = new Room(roomNumber, nOfBeds, description, comfort);
+		Rooms.put(roomNumber, room);
+		return roomNumber++;
 	}
 
 	public void deleteRoom(long number)
@@ -142,10 +158,11 @@ class Hotel
 		}
 	}
 
-	public void addClient(long id, String name, String surname)
+	public long addClient(String name, String surname)
 	{
-		Client client = new Client(id, name, surname);
-		Clients.put(id, client);
+		Client client = new Client(clientNumber, name, surname);
+		Clients.put(clientNumber, client);
+		return clientNumber++;
 	}
 
 	public void deleteClient(long id)
@@ -244,6 +261,12 @@ class Hotel
 
 	public boolean isDateWithinRange(LocalDate startDate, LocalDate endDate, LocalDate dateToCheck)
 	{
+		if (startDate.isAfter(endDate))
+		{
+			LocalDate temp = startDate;
+			startDate = endDate;
+			endDate = temp;
+		}
 		return !(dateToCheck.isBefore(startDate) || dateToCheck.isAfter(endDate));
 	}
 
@@ -300,22 +323,80 @@ class Hotel
 
 	private double calculateTotalPrice(LocalDate checkInDate, LocalDate checkOutDate, long clientId, List<Long> roomsList)
 	{
-		return 2.3;
+		double dailyPrice = 50.0; // price for 1 bed in basic room
+		double totalSum = 0.0;
+
+		long clientVisitCount = Clients.get(clientId).visitCount;
+
+		// calculate price for list of rooms for every day
+		for (LocalDate i = checkInDate; i.until(checkOutDate).getDays() >= 0; i = i.plusDays(1) )
+		{
+			double oneDayPrice = 0.0;
+			double seasonFee = 1.0;
+			// check if there is higher price in season
+			for (SeasonalFee extraFee : SeasonalFees.values())
+			{
+				 if(isDateWithinRange(extraFee.getStartDate(),extraFee.getEndDate(), i))
+				 {
+				 	seasonFee = extraFee.getFee();
+				 }
+			}
+
+			for (Long roomId : roomsList)
+			{
+				// multiply by number for better comfort depend on number of beds
+				double comfortPrice = 0.0;
+				Room room =  Rooms.get(roomId);
+				switch (room.getComfort())
+				{
+					case standardowy:
+						comfortPrice = 1.0;
+						break;
+					case luksusowy:
+						comfortPrice =  2.0;
+						break;
+					case rodzinny:
+						comfortPrice = 1.5;
+						break;
+					case apartament:
+						comfortPrice = 4.0;
+						break;
+				}
+
+				oneDayPrice += (comfortPrice * room.getnOfBeds() * dailyPrice);
+			}
+			totalSum += (oneDayPrice * seasonFee);
+		}
+
+		//discount for frequent clients
+		if (clientVisitCount > 2)
+		{
+			totalSum *= 0.9;
+		}
+
+		//discount for eariler reservation
+		if (LocalDate.now().until(checkInDate).getDays() > 20)
+		{
+			totalSum *= 0.95;
+		}
+
+		return totalSum;
 	}
 
-	public Reservation checkReservation(LocalDate checkInDate, LocalDate checkOutDate, long clientId, long nOfBeds)
+	public Reservation checkReservation(long clientId, LocalDate checkInDate, LocalDate checkOutDate, long nOfBeds)
 	{
-
-		List<Long> roomList = new ArrayList<>();
-
-		double totalPrice = 0.0;
-		return new Reservation(1, checkInDate, checkOutDate, clientId, totalPrice, roomList);
+		List<Long> roomList = getFreeRooms(checkInDate, checkOutDate);
+		Map<Long, Room> roomMap = sortRoomsByBeds(selectRooms(roomList, nOfBeds));
+		List<Long> roomsIds = new ArrayList<>(roomMap.keySet());
+		double totalPrice = calculateTotalPrice(checkInDate, checkOutDate, clientId, roomsIds);
+		return new Reservation(reservationNumber++, checkInDate, checkOutDate, clientId, totalPrice, roomsIds);
 	}
 
-	public void addReservation(long id, LocalDate checkInDate, LocalDate checkOutDate, long clientId, List<Long> roomsList)
+	public long addReservation(Reservation reservation)
 	{
-		Reservation reservation = new Reservation(id, checkInDate, checkOutDate, clientId, Double.parseDouble("222.30"), roomsList);
-		Reservations.put(id, reservation);
+		Reservations.put(reservationNumber, reservation);
+		Clients.get(reservation.getClientId()).incVisitCount();
+		return reservationNumber++;
 	}
 
 	public void deleteReservation(long id)
