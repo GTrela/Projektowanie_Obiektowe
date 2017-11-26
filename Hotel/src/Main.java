@@ -43,7 +43,7 @@ public class Main
 	    System.out.printf("Całkowita cena to: %.2f zł",test.totalPrice);
 
 
-        //Map<Long, Room> test = hotel.selectRooms(hotel.getFreeRooms(LocalDate.of(2016, Month.NOVEMBER, 22), LocalDate.of(2016, Month.NOVEMBER, 25)), 2);
+        //Map<Long, Room> test = hotel.selectRooms(hotel.getVacantRooms(LocalDate.of(2016, Month.NOVEMBER, 22), LocalDate.of(2016, Month.NOVEMBER, 25)), 2);
 
 //        for(Map.Entry<Long,Room> entry : test.entrySet()) {
 //            Long key = entry.getKey();
@@ -52,7 +52,7 @@ public class Main
 //            System.out.println(key + " => " + value.getnOfBeds());
 //        }
 
-        //System.out.print(hotel.selectRooms(hotel.getFreeRooms(LocalDate.of(2016, Month.NOVEMBER, 10), LocalDate.of(2016, Month.NOVEMBER, 25)), 4));
+        //System.out.print(hotel.selectRooms(hotel.getVacantRooms(LocalDate.of(2016, Month.NOVEMBER, 10), LocalDate.of(2016, Month.NOVEMBER, 25)), 4));
         /*Map<Long, Room> test = hotel.sortRoomsByBeds(hotel.getRooms());
         for(Map.Entry<Long,Room> entry : test.entrySet()) {
             Long key = entry.getKey();
@@ -60,9 +60,9 @@ public class Main
 
             System.out.println(key + " => " + value.getnOfBeds());
         }*/
-        //System.out.print(hotel.getFreeRooms(LocalDate.of(2016, Month.NOVEMBER, 22), LocalDate.of(2016, Month.NOVEMBER, 25)));
+        //System.out.print(hotel.getVacantRooms(LocalDate.of(2016, Month.NOVEMBER, 22), LocalDate.of(2016, Month.NOVEMBER, 25)));
         //System.out.print(hotel.isDateWithinRange(LocalDate.of(2016, Month.JUNE, 10), LocalDate.of(2016, Month.JUNE, 19), LocalDate.of(2016, Month.JUNE, 9)));
-        //System.out.println(hotel.getFreeRooms());
+        //System.out.println(hotel.getVacantRooms());
         //hotel.addSeasonalFee("Sezon wakacyjny", LocalDate.of(0, Month.JUNE, 19), LocalDate.of(0, Month.SEPTEMBER, 1), 25);
         //hotel.saveSeasonalFees();
         //hotel.saveRooms();

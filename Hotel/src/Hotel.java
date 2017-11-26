@@ -270,7 +270,7 @@ class Hotel
 		return !(dateToCheck.isBefore(startDate) || dateToCheck.isAfter(endDate));
 	}
 
-	public List<Long> getFreeRooms(LocalDate startDate, LocalDate endDate)
+	public List<Long> getVacantRooms(LocalDate startDate, LocalDate endDate)
 	{
 		List<Long> rooms = new ArrayList<>(Rooms.keySet());
 
@@ -387,7 +387,7 @@ class Hotel
 
 	public Reservation checkReservation(long clientId, LocalDate checkInDate, LocalDate checkOutDate, long nOfBeds)
 	{
-		List<Long> roomList = getFreeRooms(checkInDate, checkOutDate);
+		List<Long> roomList = getVacantRooms(checkInDate, checkOutDate);
 		Map<Long, Room> roomMap = selectRooms(roomList, nOfBeds);
 		List<Long> roomsIds = new ArrayList<>(roomMap.keySet());
 		double totalPrice = calculateTotalPrice(checkInDate, checkOutDate, clientId, roomsIds);
