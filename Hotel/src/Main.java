@@ -8,6 +8,7 @@ public class Main
 	public static void main(String[] args)
 	{
 		Scanner scanner = new Scanner(System.in);
+		scanner.useDelimiter("\n");
 
 		System.out.println("Witaj w systemie hotelu Relaks!");
 		Hotel hotel = Hotel.getInstance();
@@ -61,6 +62,7 @@ public class Main
 							break;
 					}
 					break;
+
 				case 2:
 					System.out.printf("Podaj imie:\n");
 					String name = scanner.next();
@@ -105,27 +107,41 @@ public class Main
 			switch (option)
 			{
 				case 1:
-					System.out.println("Podaj datę zameldowania w formacie dzień/miesiąc/rok");
-					String checkInDate = scanner.next();
-					System.out.println("Podaj datę wymeldowania w formacie dzień/miesiąc/rok");
-					String checkOutDate = scanner.next();
-					System.out.println("Podaj ilość łóżek");
-					long nOfBeds = scanner.nextLong();
-					System.out.println("Proponowana rezerwacja:");
-					Reservation reservation = hotel.checkReservation(currentUserId, dateInput(checkInDate), dateInput(checkOutDate), nOfBeds);
-					System.out.println(reservation);
-					System.out.println("[1] Aby dokonać powyższej rezerwacji");
-					System.out.println("[2] Aby anulować powyższą rezerwację");
-					int option2 = scanner.nextInt();
-					switch (option2)
+					try
 					{
-						case 1:
-							System.out.printf("Dokonano rezerwacji. Id rezerwacji: %d\n", hotel.addReservation(reservation));
+						System.out.println("Podaj datę zameldowania w formacie dzień/miesiąc/rok");
+						String checkInDate = scanner.next();
+						System.out.println("Podaj datę wymeldowania w formacie dzień/miesiąc/rok");
+						String checkOutDate = scanner.next();
+						System.out.println("Podaj ilość łóżek");
+						long nOfBeds = scanner.nextLong();
+						Reservation reservation = hotel.checkReservation(currentUserId, dateInput(checkInDate), dateInput(checkOutDate), nOfBeds);
+						if (reservation == null)
+						{
+							System.out.println("Nie znaleziono odpowiednich pokoi do zadanych kryteriów rezerwacji");
 							break;
-						default:
-							break;
+						}
+						System.out.println("Proponowana rezerwacja:");
+						System.out.println(reservation);
+						System.out.println("[1] Aby dokonać powyższej rezerwacji");
+						System.out.println("[2] Aby anulować powyższą rezerwację");
+						int option2 = scanner.nextInt();
+						switch (option2)
+						{
+							case 1:
+								System.out.printf("Dokonano rezerwacji. Id rezerwacji: %d\n", hotel.addReservation(reservation));
+								break;
+							default:
+								break;
+						}
 					}
+					catch (Exception e)
+					{
+						System.out.println("Wpisano błedną datę!");
+					}
+
 					break;
+
 				case 2:
 					System.out.println("Podaj id rejestracji:");
 					long reservationId = scanner.nextInt();
@@ -138,34 +154,49 @@ public class Main
 					}
 					break;
 				case 3:
+
 					condtition = false;
 					break;
+
 				case 4:
 					if (!currentUserStatus.equals("manager"))
 						break;
-					System.out.println("Podaj id użytkownika, na którego chcesz dokonać rejestracji");
-					long userId = scanner.nextLong();
-					System.out.println("Podaj datę zameldowania w formacie dzień/miesiąc/rok");
-					String checkInDate2 = scanner.next();
-					System.out.println("Podaj datę wymeldowania w formacie dzień/miesiąc/rok");
-					String checkOutDate2 = scanner.next();
-					System.out.println("Podaj ilość łóżek");
-					long nOfBeds2 = scanner.nextLong();
-					System.out.println("Proponowana rezerwacja:");
-					Reservation reservation2 = hotel.checkReservation(userId, dateInput(checkInDate2), dateInput(checkOutDate2), nOfBeds2);
-					System.out.println(reservation2);
-					System.out.println("[1] Aby dokonać powyższej rezerwacji");
-					System.out.println("[2] Aby anulować powyższą rezerwację");
-					int option3 = scanner.nextInt();
-					switch (option3)
+					try
 					{
-						case 1:
-							System.out.printf("Dokonano rezerwacji. Id rezerwacji = %d\n", hotel.addReservation(reservation2));
+						System.out.println("Podaj id użytkownika, na którego chcesz dokonać rejestracji");
+						long userId = scanner.nextLong();
+						System.out.println("Podaj datę zameldowania w formacie dzień/miesiąc/rok");
+						String checkInDate2 = scanner.next();
+						System.out.println("Podaj datę wymeldowania w formacie dzień/miesiąc/rok");
+						String checkOutDate2 = scanner.next();
+						System.out.println("Podaj ilość łóżek");
+						long nOfBeds2 = scanner.nextLong();
+						Reservation reservation2 = hotel.checkReservation(userId, dateInput(checkInDate2), dateInput(checkOutDate2), nOfBeds2);
+						if (reservation2 == null)
+						{
+							System.out.println("Nie znaleziono odpowiednich pokoi do zadanych kryteriów rezerwacji");
 							break;
-						default:
-							break;
+						}
+						System.out.println("Proponowana rezerwacja:");
+						System.out.println(reservation2);
+						System.out.println("[1] Aby dokonać powyższej rezerwacji");
+						System.out.println("[2] Aby anulować powyższą rezerwację");
+						int option3 = scanner.nextInt();
+						switch (option3)
+						{
+							case 1:
+								System.out.printf("Dokonano rezerwacji. Id rezerwacji = %d\n", hotel.addReservation(reservation2));
+								break;
+							default:
+								break;
+						}
+					}
+					catch (Exception e)
+					{
+						System.out.println("Wpisano niepoprawną datę!");
 					}
 					break;
+
 				case 5:
 					if (!currentUserStatus.equals("manager"))
 						break;
@@ -174,25 +205,35 @@ public class Main
 					hotel.deleteReservation(delReservationId);
 					System.out.println("Rezerwacja prawidłowo usunięta");
 					break;
+
 				case 6:
 					if (!currentUserStatus.equals("manager"))
 						break;
-					System.out.println("Podaj liczbę łóżek:");
-					long n0fBeds = scanner.nextLong();
-					System.out.println("Podaj opis pokoju:");
-					String roomDescription = scanner.next();
-					System.out.println("Podaj komfort pokoju (standardowy, rodzinny, apartament, luksusowy):");
-					Comfort roomComfort = Comfort.valueOf(scanner.next());
-					System.out.printf("Pomyślnie dodano pokój o id = %d\n",hotel.addRoom(n0fBeds,roomDescription,roomComfort));
+					try
+					{
+						System.out.println("Podaj liczbę łóżek:");
+						long n0fBeds = scanner.nextLong();
+						System.out.println("Podaj opis pokoju:");
+						String roomDescription = scanner.next();
+						System.out.println("Podaj komfort pokoju (standardowy, rodzinny, apartament, luksusowy):");
+						Comfort roomComfort = Comfort.valueOf(scanner.next());
+						System.out.printf("Pomyślnie dodano pokój o id = %d\n", hotel.addRoom(n0fBeds, roomDescription, roomComfort));
+					}
+					catch (Exception e)
+					{
+						System.out.println("Nie ma takiego typu komfortu!");
+					}
 					break;
+
 				case 7:
 					if (!currentUserStatus.equals("manager"))
 						break;
 					System.out.println("Podaj numer pokoju, który chcesz usunąć:");
 					long roomNr = scanner.nextLong();
 					hotel.deleteRoom(roomNr);
-					System.out.printf("Pomyślnie usunięto pokój nr = %d",roomNr);
+					System.out.printf("Pomyślnie usunięto pokój nr = %d\n",roomNr);
 					break;
+
 				case 8:
 					if (!currentUserStatus.equals("manager"))
 						break;
@@ -203,6 +244,7 @@ public class Main
 					long newClientId = hotel.addClient(name, surname);
 					System.out.printf("Utworzono użytkownika %s %s o id = %d",name, surname, newClientId);
 					break;
+
 				case 9:
 					if (!currentUserStatus.equals("manager"))
 						break;

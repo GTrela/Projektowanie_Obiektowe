@@ -514,6 +514,10 @@ class Hotel
 		List<Long> roomList = getVacantRooms(checkInDate, checkOutDate);
 		Map<Long, Room> roomMap = selectRooms(roomList, nOfBeds);
 		List<Long> roomsIds = new ArrayList<>(roomMap.keySet());
+		if (roomsIds.size() == 0)
+		{
+			return null;
+		}
 		double totalPrice = calculateTotalPrice(checkInDate, checkOutDate, clientId, roomsIds);
 		return new Reservation(reservationNumber, checkInDate, checkOutDate, clientId, totalPrice, roomsIds);
 	}
