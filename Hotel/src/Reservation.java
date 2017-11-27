@@ -49,4 +49,23 @@ class Reservation
     {
         return totalPrice;
     }
+
+	@Override
+	public String toString()
+	{
+		StringBuilder builder = new StringBuilder();
+		builder.append(String.format("Id: %d ",id));
+		builder.append("Data zameldowania: ");
+		builder.append(checkInDate);
+		builder.append(" Data wymeldowania: ");
+		builder.append(checkOutDate);
+		builder.append(" Numery zarezerwowanych pokoi: ");
+		for (int i = 0; i < roomsList.size(); i++)
+		{
+			builder.append(roomsList.get(i) + " ");
+		}
+		builder.append(String.format("Kwota do zapłaty %.2f zł",totalPrice));
+
+		return builder.toString();
+	}
 }
