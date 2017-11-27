@@ -39,8 +39,8 @@ class Hotel
 
 	public void Init(String path)
 	{
-		File f = new File(path);
-		if (f.exists() && f.isDirectory()) {
+		if (new File(path).exists())
+		{
 			setPath(path);
 		}
 		else
@@ -355,7 +355,7 @@ class Hotel
 		{
 			public int compare(Map.Entry<Long, Room> o1, Map.Entry<Long, Room> o2)
 			{
-				return (o2.getValue()).compareTo(o1.getValue());
+				return (o1.getValue()).compareTo(o2.getValue());
 			}
 		});
 
