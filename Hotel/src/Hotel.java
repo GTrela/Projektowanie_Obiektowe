@@ -620,4 +620,8 @@ class Hotel
 	{
 		return SeasonalFees;
 	}
+	public String getPath()
+	{
+		return path;
+	}
 }
