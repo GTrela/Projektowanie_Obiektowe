@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 
 class Hotel
 {
+	private static Hotel self;
 	private Map<Long, Room> Rooms;
 	private Map<Long, Client> Clients;
 	private Map<Long, Reservation> Reservations;
@@ -14,23 +15,44 @@ class Hotel
 	private long roomNumber;
 	private long clientNumber;
 
-	public Hotel(String path)
+
+	public static Hotel getInstance ()
 	{
-		setPath(path);
+		if (self == null)
+		{
+			self = new Hotel();
+		}
+		return self;
+	}
+
+	private Hotel()
+	{
+		path = "out/production/Hotel/";
 		Clients = new HashMap<>();
 		Rooms = new HashMap<>();
 		Reservations = new HashMap<>();
 		SeasonalFees = new HashMap<>();
-		Init();
+		reservationNumber = 1;
+		roomNumber = 1;
+		clientNumber = 1;
 	}
 
-	public void Init()
+	public void Init(String path)
 	{
+		File f = new File(path);
+		if (f.exists() && f.isDirectory()) {
+			setPath(path);
+		}
+		else
+		{
+			this.path = "out/production/Hotel/";
+			System.out.printf("Taki folder nie istnieje. Tworzę folder: %s\n",this.path);
+		}
 		loadConf();
-//		loadClients();
-//		loadRooms();
-//		loadReservations();
-//		loadSeasonalFees();
+		loadClients();
+		loadRooms();
+		loadReservations();
+		loadSeasonalFees();
 	}
 
 	public void setPath(String path)
@@ -39,7 +61,7 @@ class Hotel
 	}
 
 	// Configuration management
-	public void loadConf()
+	public boolean loadConf()
 	{
 		String line = "";
 		String cvsSplitBy = ",";
@@ -65,14 +87,10 @@ class Hotel
 			catch (IOException e)
 			{
 				e.printStackTrace();
+				return false;
 			}
 		}
-		else
-		{
-			reservationNumber = 1;
-			roomNumber = 1;
-			clientNumber = 1;
-		}
+		return true;
 	}
 
 	public void saveConf()
@@ -95,8 +113,26 @@ class Hotel
 		}
 	}
 
+	public boolean saveData()
+	{
+		try
+		{
+			saveConf();
+			saveClients();
+			saveRooms();
+			saveReservations();
+			saveSeasonalFees();
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			return false;
+		}
+		return true;
+	}
+
 	// Room management
-	public void loadRooms()
+	public boolean loadRooms()
 	{
 		String line = "";
 		String cvsSplitBy = ",";
@@ -115,10 +151,16 @@ class Hotel
 			}
 
 		}
+		catch (FileNotFoundException ex)
+		{
+			return false;
+		}
 		catch (IOException e)
 		{
 			e.printStackTrace();
+			return false;
 		}
+		return true;
 	}
 
 	public void saveRooms()
@@ -160,7 +202,7 @@ class Hotel
 	}
 
 	// Client management
-	public void loadClients()
+	public boolean loadClients()
 	{
 		String line = "";
 		String cvsSplitBy = ",";
@@ -172,18 +214,24 @@ class Hotel
 			while ((line = br.readLine()) != null)
 			{
 				String[] clientParam = line.split(cvsSplitBy);
-				if (clientParam.length == 3)
+				if (clientParam.length == 5)
 				{
-					Client client = new Client(Long.parseLong(clientParam[0]), clientParam[1], clientParam[2]);
+					Client client = new Client(Long.parseLong(clientParam[0]), clientParam[1], clientParam[2],Integer.parseInt(clientParam[3]),clientParam[4]);
 					Clients.put(Long.parseLong(clientParam[0]), client);
 				}
 			}
 
 		}
+		catch (FileNotFoundException ex)
+		{
+			return false;
+		}
 		catch (IOException e)
 		{
 			e.printStackTrace();
+			return false;
 		}
+		return true;
 	}
 
 	public void saveClients()
@@ -200,6 +248,10 @@ class Hotel
 				builder.append(client.getName());
 				builder.append(",");
 				builder.append(client.getSurname());
+				builder.append(",");
+				builder.append(client.getVisitCount());
+				builder.append(",");
+				builder.append(client.getStatus());
 				builder.append('\n');
 			}
 			outFile.write(builder.toString());
@@ -223,7 +275,7 @@ class Hotel
 	}
 
 	// Reservation management
-	public void loadReservations()
+	public boolean loadReservations()
 	{
 		String line = "";
 		String cvsSplitBy = ",";
@@ -250,10 +302,16 @@ class Hotel
 			}
 
 		}
+		catch (FileNotFoundException ex)
+		{
+			return false;
+		}
 		catch (IOException e)
 		{
 			e.printStackTrace();
+			return false;
 		}
+		return true;
 	}
 
 	public void saveReservations()
@@ -428,7 +486,7 @@ class Hotel
 			totalSum *= 0.9;
 		}
 
-		//discount for eariler reservation
+		//discount for earlier reservation
 		if (LocalDate.now().until(checkInDate).getDays() > 20)
 		{
 			totalSum *= 0.95;
@@ -443,7 +501,7 @@ class Hotel
 		Map<Long, Room> roomMap = selectRooms(roomList, nOfBeds);
 		List<Long> roomsIds = new ArrayList<>(roomMap.keySet());
 		double totalPrice = calculateTotalPrice(checkInDate, checkOutDate, clientId, roomsIds);
-		return new Reservation(reservationNumber++, checkInDate, checkOutDate, clientId, totalPrice, roomsIds);
+		return new Reservation(reservationNumber, checkInDate, checkOutDate, clientId, totalPrice, roomsIds);
 	}
 
 	public long addReservation(Reservation reservation)
@@ -459,7 +517,7 @@ class Hotel
 	}
 
 	// SeasonalFee management
-	public void loadSeasonalFees()
+	public boolean loadSeasonalFees()
 	{
 		String line = "";
 		String cvsSplitBy = ",";
@@ -478,10 +536,16 @@ class Hotel
 			}
 
 		}
+		catch (FileNotFoundException ex)
+		{
+			return false;
+		}
 		catch (IOException e)
 		{
 			e.printStackTrace();
+			return false;
 		}
+		return true;
 	}
 
 	public void saveSeasonalFees()
