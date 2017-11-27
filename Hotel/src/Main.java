@@ -9,27 +9,57 @@ public class Main
 	{
 		Scanner scanner = new Scanner(System.in);
 
-		System.out.println("Witaj w systemie administracji hotelu Relaks!");
-		System.out.println("Podaj ścieżkę do plików gdzie jest przechowywana konfiguracja:");
-
-		String path = scanner.next();
+		System.out.println("Witaj w systemie hotelu Relaks!");
 		Hotel hotel = Hotel.getInstance();
-		hotel.Init(path);
+		hotel.Init("out/production/Hotel/");
 
 		long currentUserId = -1;
 		boolean condtition = true;
 		while (condtition)
 		{
-			System.out.println("[1] zaloguj się do systemu");
+			System.out.println("[1] Zaloguj się do systemu");
 			System.out.println("[2] Utwórz nowego użytkownika");
 			Client client;
 			int option = scanner.nextInt();
+			boolean passError = false;
 			switch (option)
 			{
 				case 1:
-					System.out.printf("Podaj id:\n");
-					currentUserId = scanner.nextLong();
-					condtition = false;
+					System.out.println("[1] Panel recepcjonisty");
+					System.out.println("[2] Panel klienta");
+					int panel_option = scanner.nextInt();
+					switch (panel_option)
+					{
+						case 1:
+							System.out.printf("Podaj hasło:\n");
+							String pass = scanner.next();
+
+							if (hotel.isAdminPassCorrect(pass))
+							{
+								for (Client it : hotel.getClients().values())
+								{
+									if (it.getName().equals("Renata") && it.getSurname().equals("Recepcjonistyczna"))
+									{
+										currentUserId = it.getId();
+									}
+								}
+								condtition = false;
+							}
+							else
+							{
+								System.out.printf("Błędne hasło\n");
+								passError = true;
+							}
+							break;
+						case 2:
+							System.out.printf("Podaj id:\n");
+							currentUserId = scanner.nextLong();
+							condtition = false;
+							break;
+						default:
+							System.out.printf("wpisz jeden z poniższych numerów\n");
+							break;
+					}
 					break;
 				case 2:
 					System.out.printf("Podaj imie:\n");
@@ -44,7 +74,7 @@ public class Main
 					break;
 			}
 			client = hotel.getClients().get(currentUserId);
-			if (client == null)
+			if (client == null && !passError)
 			{
 				System.out.println("Nie ma klienta o takim id!");
 				condtition = true;
@@ -61,16 +91,15 @@ public class Main
 		{
 			System.out.println("[1] Aby wyszukać wolne pokoje");
 			System.out.println("[2] Aby sprawdzić rezerwację");
-			System.out.println("[3] Aby zostać Recepcjonistą");
-			System.out.println("[4] Aby wyjść");
+			System.out.println("[3] Aby wyjść");
 			if (currentUserStatus.equals("manager"))
 			{
-				System.out.println("[5] Aby dokonać rezerwacji na podany id");
-				System.out.println("[6] Aby usunąć rezerwację o podanym id");
-				System.out.println("[7] Aby dodać pokój");
-				System.out.println("[8] Aby usunąć pokój");
-				System.out.println("[9] Aby dodać użytkownika");
-				System.out.println("[10] Aby usunąć użytkownika");
+				System.out.println("[4] Aby dokonać rezerwacji na podany id");
+				System.out.println("[5] Aby usunąć rezerwację o podanym id");
+				System.out.println("[6] Aby dodać pokój");
+				System.out.println("[7] Aby usunąć pokój");
+				System.out.println("[8] Aby dodać użytkownika");
+				System.out.println("[9] Aby usunąć użytkownika");
 			}
 			int option = scanner.nextInt();
 			switch (option)
@@ -109,13 +138,9 @@ public class Main
 					}
 					break;
 				case 3:
-					client.setManager();
-					System.out.println("Zostałeś menagerem! Wyjdź z systemu i zaloguj się ponownie!");
-					break;
-				case 4:
 					condtition = false;
 					break;
-				case 5:
+				case 4:
 					if (!currentUserStatus.equals("manager"))
 						break;
 					System.out.println("Podaj id użytkownika, na którego chcesz dokonać rejestracji");
@@ -141,7 +166,7 @@ public class Main
 							break;
 					}
 					break;
-				case 6:
+				case 5:
 					if (!currentUserStatus.equals("manager"))
 						break;
 					System.out.println("Podaj id rezerwacji, którą chcesz usunąć:");
@@ -149,18 +174,18 @@ public class Main
 					hotel.deleteReservation(delReservationId);
 					System.out.println("Rezerwacja prawidłowo usunięta");
 					break;
-				case 7:
+				case 6:
 					if (!currentUserStatus.equals("manager"))
 						break;
 					System.out.println("Podaj liczbę łóżek:");
 					long n0fBeds = scanner.nextLong();
 					System.out.println("Podaj opis pokoju:");
 					String roomDescription = scanner.next();
-					System.out.println("Podaj komfort pokoju:");
+					System.out.println("Podaj komfort pokoju (standardowy, rodzinny, apartament, luksusowy):");
 					Comfort roomComfort = Comfort.valueOf(scanner.next());
 					System.out.printf("Pomyślnie dodano pokój o id = %d\n",hotel.addRoom(n0fBeds,roomDescription,roomComfort));
 					break;
-				case 8:
+				case 7:
 					if (!currentUserStatus.equals("manager"))
 						break;
 					System.out.println("Podaj numer pokoju, który chcesz usunąć:");
@@ -168,7 +193,7 @@ public class Main
 					hotel.deleteRoom(roomNr);
 					System.out.printf("Pomyślnie usunięto pokój nr = %d",roomNr);
 					break;
-				case 9:
+				case 8:
 					if (!currentUserStatus.equals("manager"))
 						break;
 					System.out.printf("Podaj imie:\n");
@@ -178,7 +203,7 @@ public class Main
 					long newClientId = hotel.addClient(name, surname);
 					System.out.printf("Utworzono użytkownika %s %s o id = %d",name, surname, newClientId);
 					break;
-				case 10:
+				case 9:
 					if (!currentUserStatus.equals("manager"))
 						break;
 					System.out.println("Podaj id użytkownika, którego chcesz usunąć:");
@@ -196,7 +221,7 @@ public class Main
 	public static LocalDate dateInput(String userInput)
 	{
 
-		DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("d/M/yy");
+		DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("d/M/yyyy");
 		LocalDate date = LocalDate.parse(userInput, dateFormat);
 		return date;
 	}

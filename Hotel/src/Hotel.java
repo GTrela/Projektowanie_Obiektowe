@@ -14,7 +14,7 @@ class Hotel
 	private long reservationNumber;
 	private long roomNumber;
 	private long clientNumber;
-
+	private String password;
 
 	public static Hotel getInstance ()
 	{
@@ -35,6 +35,12 @@ class Hotel
 		reservationNumber = 1;
 		roomNumber = 1;
 		clientNumber = 1;
+		password = "QMyWpYKgNGVXUYUjgZPiD6ahNcgbAm";
+	}
+
+	public boolean isAdminPassCorrect(String pass)
+	{
+		return pass.equals(password);
 	}
 
 	public void Init(String path)
@@ -49,6 +55,14 @@ class Hotel
 			System.out.printf("Taki folder nie istnieje. Tworzę folder: %s\n",this.path);
 		}
 		loadConf();
+		addClient("Renata", "Recepcjonistyczna");
+		for (Client client : Clients.values())
+		{
+			if (client.getName().equals("Renata") && client.getSurname().equals("Recepcjonistyczna"))
+			{
+				client.setManager();
+			}
+		}
 		loadClients();
 		loadRooms();
 		loadReservations();
