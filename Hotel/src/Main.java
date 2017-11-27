@@ -1,98 +1,203 @@
 import java.time.LocalDate;
-import java.time.Month;
-import java.time.Period;
-import java.util.*;
+import java.time.format.DateTimeFormatter;
+import java.util.Scanner;
 
 public class Main
 {
-    public static void main(String[] args)
-    {
-        Hotel hotel = new Hotel("out/production/Hotel/");
-	    // create sample rooms
-		hotel.addRoom(1,"Pokój testowy", Comfort.luksusowy);
-	    hotel.addRoom(3,"Pokój testowy 2", Comfort.luksusowy);
-	    hotel.addRoom(2,"Pokój zwykły 1", Comfort.standardowy);
-	    hotel.addRoom(4,"Pokój zwykły 2", Comfort.standardowy);
-	    hotel.addRoom(4,"Pokój zwykły 3", Comfort.standardowy);
-	    for (Room room : hotel.getRooms().values())
-        {
-            System.out.printf("Room nr: %d, Beds number: %d, Description: %s, Comfort: %s\n",
-                    room.getNr(),room.getnOfBeds(),room.getDescription(),room.getComfort());
-        }
 
-        //create sample clients
-	    hotel.addClient("Jakub","Jas");
-	    hotel.addClient("Grzegorz","Trela");
+	public static void main(String[] args)
+	{
+		Scanner scanner = new Scanner(System.in);
 
-	    hotel.addSeasonalFee("sezon grzewczy",LocalDate.of(2017, Month.DECEMBER, 1),
-			    LocalDate.of(2017, Month.DECEMBER, 31),1.5);
+		System.out.println("Witaj w systemie administracji hotelu Relaks!");
+		System.out.println("Podaj ścieżkę do plików gdzie jest przechowywana konfiguracja:");
 
-	    // sample reservation
-	    Reservation test = hotel.checkReservation(1,LocalDate.of(2017, Month.DECEMBER, 20),
-			    LocalDate.of(2017, Month.DECEMBER, 22),5);
+		String path = scanner.next();
+		Hotel hotel = Hotel.getInstance();
+		hotel.Init(path);
 
-	    long reservationId = hotel.addReservation(test);
-
-	    test = hotel.getReservations().get(reservationId);
-
-		System.out.println("Zarezerwowano pokoje o następujących id:");
-		for (Long roomId : test.getRoomsList())
+		long currentUserId = -1;
+		boolean condtition = true;
+		while (condtition)
 		{
-			System.out.println(roomId);
+			System.out.println("[1] zaloguj się do systemu");
+			System.out.println("[2] Utwórz nowego użytkownika");
+			Client client;
+			int option = scanner.nextInt();
+			switch (option)
+			{
+				case 1:
+					System.out.printf("Podaj id:\n");
+					currentUserId = scanner.nextLong();
+					condtition = false;
+					break;
+				case 2:
+					System.out.printf("Podaj imie:\n");
+					String name = scanner.next();
+					System.out.printf("Podaj nazwisko:\n");
+					String surname = scanner.next();
+					currentUserId = hotel.addClient(name, surname);
+					condtition = false;
+					break;
+				default:
+					System.out.printf("wpisz jeden z poniższych numerów\n");
+					break;
+			}
+			client = hotel.getClients().get(currentUserId);
+			if (client == null)
+			{
+				System.out.println("Nie ma klienta o takim id!");
+				condtition = true;
+			}
 		}
-	    System.out.printf("Całkowita cena to: %.2f zł",test.totalPrice);
 
+		Client client = hotel.getClients().get(currentUserId);
 
-        //Map<Long, Room> test = hotel.selectRooms(hotel.getVacantRooms(LocalDate.of(2016, Month.NOVEMBER, 22), LocalDate.of(2016, Month.NOVEMBER, 25)), 2);
+		System.out.println("Zalogowano jako: " + client.toString());
+		String currentUserStatus = client.getStatus();
 
-//        for(Map.Entry<Long,Room> entry : test.entrySet()) {
-//            Long key = entry.getKey();
-//            Room value = entry.getValue();
-//
-//            System.out.println(key + " => " + value.getnOfBeds());
-//        }
+		condtition = true;
+		while (condtition)
+		{
+			System.out.println("[1] Aby wyszukać wolne pokoje");
+			System.out.println("[2] Aby sprawdzić rezerwację");
+			System.out.println("[3] Aby zostać Recepcjonistą");
+			System.out.println("[4] Aby wyjść");
+			if (currentUserStatus.equals("manager"))
+			{
+				System.out.println("[5] Aby dokonać rezerwacji na podany id");
+				System.out.println("[6] Aby usunąć rezerwację o podanym id");
+				System.out.println("[7] Aby dodać pokój");
+				System.out.println("[8] Aby usunąć pokój");
+				System.out.println("[9] Aby dodać użytkownika");
+				System.out.println("[10] Aby usunąć użytkownika");
+			}
+			int option = scanner.nextInt();
+			switch (option)
+			{
+				case 1:
+					System.out.println("Podaj datę zameldowania w formacie dzień/miesiąc/rok");
+					String checkInDate = scanner.next();
+					System.out.println("Podaj datę wymeldowania w formacie dzień/miesiąc/rok");
+					String checkOutDate = scanner.next();
+					System.out.println("Podaj ilość łóżek");
+					long nOfBeds = scanner.nextLong();
+					System.out.println("Proponowana rezerwacja:");
+					Reservation reservation = hotel.checkReservation(currentUserId, dateInput(checkInDate), dateInput(checkOutDate), nOfBeds);
+					System.out.println(reservation);
+					System.out.println("[1] Aby dokonać powyższej rezerwacji");
+					System.out.println("[2] Aby anulować powyższą rezerwację");
+					int option2 = scanner.nextInt();
+					switch (option2)
+					{
+						case 1:
+							System.out.printf("Dokonano rezerwacji. Id rezerwacji: %d\n", hotel.addReservation(reservation));
+							break;
+						default:
+							break;
+					}
+					break;
+				case 2:
+					System.out.println("Podaj id rejestracji:");
+					long reservationId = scanner.nextInt();
+					if (hotel.getReservations().get(reservationId) != null)
+					{
+						System.out.println(hotel.getReservations().get(reservationId).toString());
+					} else
+					{
+						System.out.println("Rezerwacja o takim id nie istnieje!");
+					}
+					break;
+				case 3:
+					client.setManager();
+					System.out.println("Zostałeś menagerem! Wyjdź z systemu i zaloguj się ponownie!");
+					break;
+				case 4:
+					condtition = false;
+					break;
+				case 5:
+					if (!currentUserStatus.equals("manager"))
+						break;
+					System.out.println("Podaj id użytkownika, na którego chcesz dokonać rejestracji");
+					long userId = scanner.nextLong();
+					System.out.println("Podaj datę zameldowania w formacie dzień/miesiąc/rok");
+					String checkInDate2 = scanner.next();
+					System.out.println("Podaj datę wymeldowania w formacie dzień/miesiąc/rok");
+					String checkOutDate2 = scanner.next();
+					System.out.println("Podaj ilość łóżek");
+					long nOfBeds2 = scanner.nextLong();
+					System.out.println("Proponowana rezerwacja:");
+					Reservation reservation2 = hotel.checkReservation(userId, dateInput(checkInDate2), dateInput(checkOutDate2), nOfBeds2);
+					System.out.println(reservation2);
+					System.out.println("[1] Aby dokonać powyższej rezerwacji");
+					System.out.println("[2] Aby anulować powyższą rezerwację");
+					int option3 = scanner.nextInt();
+					switch (option3)
+					{
+						case 1:
+							System.out.printf("Dokonano rezerwacji. Id rezerwacji = %d\n", hotel.addReservation(reservation2));
+							break;
+						default:
+							break;
+					}
+					break;
+				case 6:
+					if (!currentUserStatus.equals("manager"))
+						break;
+					System.out.println("Podaj id rezerwacji, którą chcesz usunąć:");
+					long delReservationId = scanner.nextLong();
+					hotel.deleteReservation(delReservationId);
+					System.out.println("Rezerwacja prawidłowo usunięta");
+					break;
+				case 7:
+					if (!currentUserStatus.equals("manager"))
+						break;
+					System.out.println("Podaj liczbę łóżek:");
+					long n0fBeds = scanner.nextLong();
+					System.out.println("Podaj opis pokoju:");
+					String roomDescription = scanner.next();
+					System.out.println("Podaj komfort pokoju:");
+					Comfort roomComfort = Comfort.valueOf(scanner.next());
+					System.out.printf("Pomyślnie dodano pokój o id = %d\n",hotel.addRoom(n0fBeds,roomDescription,roomComfort));
+					break;
+				case 8:
+					if (!currentUserStatus.equals("manager"))
+						break;
+					System.out.println("Podaj numer pokoju, który chcesz usunąć:");
+					long roomNr = scanner.nextLong();
+					hotel.deleteRoom(roomNr);
+					System.out.printf("Pomyślnie usunięto pokój nr = %d",roomNr);
+					break;
+				case 9:
+					if (!currentUserStatus.equals("manager"))
+						break;
+					System.out.printf("Podaj imie:\n");
+					String name = scanner.next();
+					System.out.printf("Podaj nazwisko:\n");
+					String surname = scanner.next();
+					long newClientId = hotel.addClient(name, surname);
+					System.out.printf("Utworzono użytkownika %s %s o id = %d",name, surname, newClientId);
+					break;
+				case 10:
+					if (!currentUserStatus.equals("manager"))
+						break;
+					System.out.println("Podaj id użytkownika, którego chcesz usunąć:");
+					long delUserId = scanner.nextLong();
+					hotel.deleteClient(delUserId);
+					System.out.printf("Pomyślnie usunięto użytkownika nr = %d",delUserId);
+					break;
+			}
+		}
 
-        //System.out.print(hotel.selectRooms(hotel.getVacantRooms(LocalDate.of(2016, Month.NOVEMBER, 10), LocalDate.of(2016, Month.NOVEMBER, 25)), 4));
-        /*Map<Long, Room> test = hotel.sortRoomsByBeds(hotel.getRooms());
-        for(Map.Entry<Long,Room> entry : test.entrySet()) {
-            Long key = entry.getKey();
-            Room value = entry.getValue();
+		hotel.saveData();
+	}
 
-            System.out.println(key + " => " + value.getnOfBeds());
-        }*/
-        //System.out.print(hotel.getVacantRooms(LocalDate.of(2016, Month.NOVEMBER, 22), LocalDate.of(2016, Month.NOVEMBER, 25)));
-        //System.out.print(hotel.isDateWithinRange(LocalDate.of(2016, Month.JUNE, 10), LocalDate.of(2016, Month.JUNE, 19), LocalDate.of(2016, Month.JUNE, 9)));
-        //System.out.println(hotel.getVacantRooms());
-        //hotel.addSeasonalFee("Sezon wakacyjny", LocalDate.of(0, Month.JUNE, 19), LocalDate.of(0, Month.SEPTEMBER, 1), 25);
-        //hotel.saveSeasonalFees();
-        //hotel.saveRooms();
-        //hotel.addClient(1,"Jakub","Jas");
-        //hotel.addClient(2,"Grzegorz","Trela");
-        //hotel.saveClients();
-	    /*List<Long> roomsIdList = new ArrayList<>();
-	    roomsIdList.add(2L);
-	    roomsIdList.add(20L);
-	    roomsIdList.add(999L);
+	// convert String to LocalDate
+	public static LocalDate dateInput(String userInput)
+	{
 
-
-	    hotel.addReservation(2, LocalDate.of(2016, Month.NOVEMBER, 9),
-			    LocalDate.of(2016, Month.NOVEMBER, 20), 1, roomsIdList);
-	    hotel.saveReservations();*/
-
-
-        /*for (Reservation reservation : hotel.getReservations().values())
-        {
-            System.out.printf("Reservation id: %d, Client id: %d, Room number: %d, Check-in date: %s, Check-out date: %s, Total price: %f\n",
-                    reservation.getId(), reservation.getClientId(), reservation.getRoomNr(), reservation.getCheckInDate(), reservation.getCheckOutDate(), reservation.getTotalPrice());
-        }*/
-
-        /*for (LocalDate date = LocalDate.of(2016, Month.NOVEMBER, 9);
-             date.isBefore(LocalDate.of(2016, Month.NOVEMBER, 20)) || date.isEqual(LocalDate.of(2016, Month.NOVEMBER, 20));
-             date = date.plusDays(1))
-          {
-
-            System.out.println(date);
-          }*/
-        hotel.saveConf();
-    }
+		DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("d/M/yy");
+		LocalDate date = LocalDate.parse(userInput, dateFormat);
+		return date;
+	}
 }
