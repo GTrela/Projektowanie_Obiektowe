@@ -54,4 +54,14 @@ class Room implements Comparable<Room>
 	{
 		return Long.compare(this.getnOfBeds(), roomO.getnOfBeds());
 	}
+
+	@Override
+	public String toString()
+	{
+		return "Pokoj " +
+				"nr = " + nr +
+				", ilosc lozek = " + nOfBeds +
+				", opis = '" + description + '\'' +
+				", comfort = " + comfort;
+	}
 }

@@ -54,17 +54,18 @@ class Reservation
 	public String toString()
 	{
 		StringBuilder builder = new StringBuilder();
-		builder.append(String.format("Id: %d ",id));
+		builder.append(String.format("\nRezerwacja o id = %d, na klienta o id = %d. ",id,clientId));
 		builder.append("Data zameldowania: ");
 		builder.append(checkInDate);
 		builder.append(" Data wymeldowania: ");
 		builder.append(checkOutDate);
-		builder.append(" Numery zarezerwowanych pokoi: ");
+		builder.append("\nSklada sie z pokoi:\n");
 		for (int i = 0; i < roomsList.size(); i++)
 		{
-			builder.append(roomsList.get(i) + " ");
+			Hotel hotel = Hotel.getInstance();
+			builder.append("-\t"+ hotel.getRooms().get(roomsList.get(i)).toString() + "\n");
 		}
-		builder.append(String.format("Kwota do zapłaty %.2f zł",totalPrice));
+		builder.append(String.format("Kwota do zapłaty %.2f zł\n",totalPrice));
 
 		return builder.toString();
 	}
