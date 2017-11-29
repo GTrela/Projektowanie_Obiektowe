@@ -27,7 +27,14 @@ class HotelTest
         Hotel hotel = Hotel.getInstance();
         long id = hotel.addRoom(4,"Ciekawy", Comfort.standardowy);
         assertEquals(id,hotel.getRooms().get(id).getNr());
-        hotel.deleteRoom(id);
+        try
+        {
+            hotel.deleteRoom(id);
+        }
+        catch (RoomInUse roomInUse)
+        {
+            roomInUse.printStackTrace();
+        }
     }
 
     @org.junit.jupiter.api.Test
@@ -36,7 +43,14 @@ class HotelTest
         Hotel hotel = Hotel.getInstance();
         long id = hotel.addRoom(4,"Ciekawy", Comfort.standardowy);
         assertFalse(hotel.getRooms().isEmpty());
-        hotel.deleteRoom(id);
+        try
+        {
+            hotel.deleteRoom(id);
+        }
+        catch (RoomInUse roomInUse)
+        {
+            roomInUse.printStackTrace();
+        }
         assertTrue(hotel.getRooms().isEmpty());
     }
 

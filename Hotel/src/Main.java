@@ -1,5 +1,6 @@
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class Main
@@ -37,13 +38,7 @@ public class Main
 
 							if (hotel.isAdminPassCorrect(pass))
 							{
-								for (Client it : hotel.getClients().values())
-								{
-									if (it.getName().equals("Renata") && it.getSurname().equals("Recepcjonistyczna"))
-									{
-										currentUserId = it.getId();
-									}
-								}
+								currentUserId = 1;
 								condtition = false;
 							}
 							else
@@ -115,7 +110,9 @@ public class Main
 						String checkOutDate = scanner.next();
 						System.out.println("Podaj ilość łóżek");
 						long nOfBeds = scanner.nextLong();
-						Reservation reservation = hotel.checkReservation(currentUserId, dateInput(checkInDate), dateInput(checkOutDate), nOfBeds);
+						LocalDate checkIn = dateInput(checkInDate);
+						LocalDate checkOut = dateInput(checkOutDate);
+						Reservation reservation = hotel.checkReservation(currentUserId, checkIn, checkOut, nOfBeds);
 						if (reservation == null)
 						{
 							System.out.println("Nie znaleziono odpowiednich pokoi do zadanych kryteriów rezerwacji");
@@ -135,9 +132,13 @@ public class Main
 								break;
 						}
 					}
+					catch (InputMismatchException e)
+					{
+						System.out.println("Wpisano błędną daną");
+					}
 					catch (Exception e)
 					{
-						System.out.println("Wpisano błedną datę!");
+						System.out.println("Wystąpił nastepujący błąd:"+ e.getMessage());
 					}
 
 					break;
@@ -230,7 +231,15 @@ public class Main
 						break;
 					System.out.println("Podaj numer pokoju, który chcesz usunąć:");
 					long roomNr = scanner.nextLong();
-					hotel.deleteRoom(roomNr);
+					try
+					{
+						hotel.deleteRoom(roomNr);
+					}
+					catch (RoomInUse roomInUse)
+					{
+						System.out.printf(roomInUse.getMessage());
+						break;
+					}
 					System.out.printf("Pomyślnie usunięto pokój nr = %d\n",roomNr);
 					break;
 
@@ -252,6 +261,26 @@ public class Main
 					long delUserId = scanner.nextLong();
 					hotel.deleteClient(delUserId);
 					System.out.printf("Pomyślnie usunięto użytkownika nr = %d",delUserId);
+					break;
+				case 10:
+					for (Room room : hotel.getRooms().values()){
+						System.out.println(room.toString());
+					}
+					break;
+				case 11:
+					for (Reservation reservation : hotel.getReservations().values()){
+						System.out.println(reservation.toString());
+					}
+					break;
+				case 12:
+					for (Client client1 : hotel.getClients().values()){
+						System.out.println(client1.toString());
+					}
+					break;
+				case 13:
+					for (SeasonalFee seasonalFee : hotel.getSeasonalFees().values()){
+						System.out.println(seasonalFee.toString());
+					}
 					break;
 			}
 		}

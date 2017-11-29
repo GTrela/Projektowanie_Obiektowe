@@ -1,7 +1,6 @@
 import java.io.*;
 import java.time.LocalDate;
 import java.util.*;
-import java.util.stream.Collectors;
 
 class Hotel
 {
@@ -210,8 +209,15 @@ class Hotel
 		return roomNumber++;
 	}
 
-	public void deleteRoom(long number)
+	public void deleteRoom(long number) throws RoomInUse
 	{
+		for (Reservation reservation : Reservations.values())
+		{
+			if (reservation.roomsList.contains(number))
+			{
+				throw new RoomInUse(number);
+			}
+		}
 		Rooms.remove(number);
 	}
 
@@ -394,7 +400,7 @@ class Hotel
 		return !(dateToCheck.isBefore(startDate) || dateToCheck.isAfter(endDate));
 	}
 
-	public List<Long> getVacantRooms(LocalDate startDate, LocalDate endDate)
+	public List<Long> getVacantRooms(LocalDate startDate, LocalDate endDate) throws NoVacantRooms
 	{
 		List<Long> rooms = new ArrayList<>(Rooms.keySet());
 
@@ -417,10 +423,15 @@ class Hotel
 			}
 		}
 
+		if (rooms.size() == 0)
+		{
+			throw new NoVacantRooms(startDate,endDate);
+		}
+
 		return rooms;
 	}
 
-	public Map<Long, Room> selectRooms(List<Long> roomsList, long nOfBeds)
+	public Map<Long, Room> selectRooms(List<Long> roomsList, long nOfBeds) throws NoEnoughtBeds
 	{
 		Map<Long, Room> tempRooms = new HashMap<>();
 		Map<Long, Room> selectedRooms = new HashMap<>();
@@ -442,6 +453,11 @@ class Hotel
 				selectedRooms.put(entry.getKey(), entry.getValue());
 				beds -= availableBeds;
 			}
+		}
+
+		if (beds > 0)
+		{
+			throw new NoEnoughtBeds();
 		}
 
 		return selectedRooms;
@@ -509,15 +525,11 @@ class Hotel
 		return totalSum;
 	}
 
-	public Reservation checkReservation(long clientId, LocalDate checkInDate, LocalDate checkOutDate, long nOfBeds)
+	public Reservation checkReservation(long clientId, LocalDate checkInDate, LocalDate checkOutDate, long nOfBeds) throws NoEnoughtBeds, NoVacantRooms
 	{
 		List<Long> roomList = getVacantRooms(checkInDate, checkOutDate);
 		Map<Long, Room> roomMap = selectRooms(roomList, nOfBeds);
 		List<Long> roomsIds = new ArrayList<>(roomMap.keySet());
-		if (roomsIds.size() == 0)
-		{
-			return null;
-		}
 		double totalPrice = calculateTotalPrice(checkInDate, checkOutDate, clientId, roomsIds);
 		return new Reservation(reservationNumber, checkInDate, checkOutDate, clientId, totalPrice, roomsIds);
 	}
@@ -531,6 +543,7 @@ class Hotel
 
 	public void deleteReservation(long id)
 	{
+		Clients.get(Reservations.get(id).getClientId()).decVisitCount();
 		Reservations.remove(id);
 	}
 
