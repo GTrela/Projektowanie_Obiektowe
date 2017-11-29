@@ -291,6 +291,13 @@ class Hotel
 
 	public void deleteClient(long id)
 	{
+		for (Reservation reservation : Reservations.values())
+		{
+			if (reservation.getClientId() == id)
+			{
+				Reservations.remove(reservation.getId());
+			}
+		}
 		Clients.remove(id);
 	}
 
