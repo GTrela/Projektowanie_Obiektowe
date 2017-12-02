@@ -55,7 +55,29 @@ class LogInMenu extends BaseMenu
 
     public BaseMenu logInAsClient()
     {
-        return new ClientPanelMenu();
+        Hotel hotel = Hotel.getInstance();
+        Scanner scanner = new Scanner(System.in);
+        scanner.useDelimiter("\n");
+
+        System.out.print("\nPodaj swój identyfikator: ");
+        long clientID = scanner.nextLong();
+        int counter = 0;
+
+        while ( (hotel.getClients().get(clientID) == null) && (counter < 4) )
+        {
+            System.out.print("Błędny identyfikator, spróbuj ponownie: ");
+            clientID = scanner.nextLong();
+            ++counter;
+        }
+
+        if (hotel.getClients().get(clientID) != null)
+        {
+            return new ClientPanelMenu();
+        }
+        else
+        {
+            return new MainMenu();
+        }
     }
 
     public BaseMenu goBack()

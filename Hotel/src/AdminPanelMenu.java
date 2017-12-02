@@ -18,7 +18,7 @@ class AdminPanelMenu extends BaseMenu
             menuActions.put(6, AdminPanelMenu.class.getMethod("removeRoom"));
             menuActions.put(7, AdminPanelMenu.class.getMethod("addUser"));
             menuActions.put(8, AdminPanelMenu.class.getMethod("removeUser"));
-            menuActions.put(9, AdminPanelMenu.class.getMethod("goBack"));
+            menuActions.put(9, AdminPanelMenu.class.getMethod("logout"));
             menuActions.put(10, AdminPanelMenu.class.getMethod("exit"));
 
         }
@@ -79,7 +79,7 @@ class AdminPanelMenu extends BaseMenu
 
     }
 
-    public BaseMenu goBack()
+    public BaseMenu logout()
     {
         return new LogInMenu();
     }

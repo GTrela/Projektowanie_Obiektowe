@@ -6,13 +6,13 @@ class ClientPanelMenu extends BaseMenu
     {
         menuActions = new HashMap<>();
         menuDescriptions = new HashMap<>();
-        header = "LOGOWANIE";
+        header = "PANEL KLIENTA";
 
         try
         {
-            menuActions.put(1, ClientPanelMenu.class.getMethod("logInAsAdmin"));
-            menuActions.put(2, ClientPanelMenu.class.getMethod("logInAsUser"));
-            menuActions.put(3, ClientPanelMenu.class.getMethod("goBack"));
+            menuActions.put(1, ClientPanelMenu.class.getMethod("findVacantRooms"));
+            menuActions.put(2, ClientPanelMenu.class.getMethod("checkReservation"));
+            menuActions.put(3, ClientPanelMenu.class.getMethod("logout"));
             menuActions.put(4, ClientPanelMenu.class.getMethod("exit"));
         }
         catch (Exception e)
@@ -20,23 +20,23 @@ class ClientPanelMenu extends BaseMenu
             e.printStackTrace();
         }
 
-        menuDescriptions.put(1, "Dostęp dla recepcjonisty");
-        menuDescriptions.put(2, "Dostęp dla klienta");
-        menuDescriptions.put(3, "Powrót");
+        menuDescriptions.put(1, "Wyszukaj puste pokoje");
+        menuDescriptions.put(2, "Sprawdź rezerwację");
+        menuDescriptions.put(3, "Wyloguj");
         menuDescriptions.put(4, "Wyjście");
     }
 
-    public void logInAsAdmin()
+    public void findVacantRooms()
     {
 
     }
 
-    public void logInAsUser()
+    public void checkReservation()
     {
 
     }
 
-    public BaseMenu goBack()
+    public BaseMenu logout()
     {
         return new LogInMenu();
     }

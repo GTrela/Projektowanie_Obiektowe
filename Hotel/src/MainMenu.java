@@ -1,4 +1,5 @@
 import java.util.HashMap;
+import java.util.Scanner;
 
 class MainMenu extends BaseMenu
 {
@@ -29,8 +30,32 @@ class MainMenu extends BaseMenu
         return new LogInMenu();
     }
 
-    public void createNewUser()
+    public BaseMenu createNewUser()
     {
+        Hotel hotel = Hotel.getInstance();
+        Scanner scanner = new Scanner(System.in);
+        scanner.useDelimiter("\n");
+
+        System.out.printf("\nPodaj imię: ");
+        String name = scanner.next();
+
+        System.out.printf("Podaj nazwisko: ");
+        String surname = scanner.next();
+
+        long clientID = hotel.addClient(name, surname);
+
+        System.out.println("Został utworzony profil o ID: " + clientID);
+        System.out.printf("Czy chcesz wrócić do menu głównego czy strony logowania? (1/2): ");
+        int answer = scanner.nextInt();
+
+        if (answer == 1)
+        {
+            return new MainMenu();
+        }
+        else
+        {
+            return new LogInMenu();
+        }
     }
 
     public void exit()
