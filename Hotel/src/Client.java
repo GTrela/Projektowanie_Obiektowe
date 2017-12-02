@@ -4,8 +4,6 @@ class Client
 	String name;
 	String surname;
 	int visitCount;
-	String status;
-
 
 	public Client(long id, String name, String surname)
 	{
@@ -13,16 +11,14 @@ class Client
 		this.name = name;
 		this.surname = surname;
 		this.visitCount = 0;
-		this.status = "client";
 	}
 
-	public Client(long id, String name, String surname, int visitCount, String status)
+	public Client(long id, String name, String surname, int visitCount)
 	{
 		this.id = id;
 		this.name = name;
 		this.surname = surname;
 		this.visitCount = visitCount;
-		this.status = status;
 	}
 
 	public long getId()
@@ -55,26 +51,10 @@ class Client
 		return visitCount;
 	}
 
-
-	public String getStatus()
-	{
-		return status;
-	}
-
-	public void setManager()
-	{
-		status = "manager";
-	}
-
-	public void setClient()
-	{
-		status = "client";
-	}
-
 	@Override
 	public String toString()
 	{
-		return String.format("%s %s, Id: %d, Liczba wizyt: %d, Status: %s",
-				name, surname, id, visitCount, status);
+		return String.format("%s %s, Id: %d, Liczba wizyt: %d",
+				name, surname, id, visitCount);
 	}
 }

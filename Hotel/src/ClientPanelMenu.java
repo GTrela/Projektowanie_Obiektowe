@@ -2,7 +2,7 @@ import java.util.HashMap;
 
 class ClientPanelMenu extends BaseMenu
 {
-    public ClientPanelMenu()
+    public ClientPanelMenu(long currentUserID)
     {
         menuActions = new HashMap<>();
         menuDescriptions = new HashMap<>();

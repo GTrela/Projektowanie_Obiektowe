@@ -7,6 +7,7 @@ abstract class BaseMenu
     String header = "";
     Map<Integer, Method> menuActions;
     Map<Integer, String> menuDescriptions;
+    long currentUserID = -1;
 
     public Method getAction(int id)
     {

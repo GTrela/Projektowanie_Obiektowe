@@ -12,30 +12,46 @@ public class Main
 
 		Scanner scanner = new Scanner(System.in);
 		scanner.useDelimiter("\n");
-		boolean condtition = true;
 
-		while(condtition)
+		while(true)
 		{
+			boolean rError = true;
+			int option;
 			System.out.print(menu);
             System.out.print("\nPodaj numer opcji: ");
-			int option = scanner.nextInt();
 
-			try
+            while(rError)
 			{
-				Method method = menu.getAction(option);
-
-				while (method == null)
+				if (scanner.hasNextInt())
 				{
-					System.out.println("Błędny numer opcji. Spróbuj ponownie: ");
 					option = scanner.nextInt();
-					method = menu.getAction(option);
+
+					try
+					{
+						Method method = menu.getAction(option);
+
+						while (method == null)
+						{
+							System.out.print("Błędny numer opcji [1]. Spróbuj ponownie: ");
+							option = scanner.nextInt();
+							method = menu.getAction(option);
+						}
+
+						menu = (BaseMenu) method.invoke(menu);
+					}
+					catch (Exception e)
+					{
+						e.printStackTrace();
+					}
+				}
+				else
+				{
+					System.out.print("Błędny numer opcji [2]. Spróbuj ponownie: ");
+					scanner.next();
+					continue;
 				}
 
-				menu = (BaseMenu) method.invoke(menu);
-			}
-			catch (Exception e)
-			{
-				e.printStackTrace();
+				rError = false;
 			}
 
 			System.out.print("\033[H\033[2J");

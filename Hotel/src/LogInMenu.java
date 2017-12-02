@@ -72,7 +72,8 @@ class LogInMenu extends BaseMenu
 
         if (hotel.getClients().get(clientID) != null)
         {
-            return new ClientPanelMenu();
+            currentUserID = clientID;
+            return new ClientPanelMenu(currentUserID);
         }
         else
         {

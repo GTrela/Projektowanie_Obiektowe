@@ -58,14 +58,6 @@ class Hotel
 			System.out.printf("Taki folder nie istnieje. Tworzę folder: %s\n",this.path);
 		}
 		loadConf();
-		addClient("Renata", "Recepcjonistyczna");
-		for (Client client : Clients.values())
-		{
-			if (client.getName().equals("Renata") && client.getSurname().equals("Recepcjonistyczna"))
-			{
-				client.setManager();
-			}
-		}
 		loadClients();
 		loadRooms();
 		loadReservations();
@@ -237,9 +229,9 @@ class Hotel
 			while ((line = br.readLine()) != null)
 			{
 				String[] clientParam = line.split(cvsSplitBy);
-				if (clientParam.length == 5)
+				if (clientParam.length == 4)
 				{
-					Client client = new Client(Long.parseLong(clientParam[0]), clientParam[1], clientParam[2],Integer.parseInt(clientParam[3]),clientParam[4]);
+					Client client = new Client(Long.parseLong(clientParam[0]), clientParam[1], clientParam[2],Integer.parseInt(clientParam[3]));
 					Clients.put(Long.parseLong(clientParam[0]), client);
 				}
 			}
@@ -274,8 +266,6 @@ class Hotel
 				builder.append(client.getSurname());
 				builder.append(",");
 				builder.append(client.getVisitCount());
-				builder.append(",");
-				builder.append(client.getStatus());
 				builder.append('\n');
 			}
 			outFile.write(builder.toString());
