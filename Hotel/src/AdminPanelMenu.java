@@ -6,7 +6,7 @@ class AdminPanelMenu extends BaseMenu
     {
         menuActions = new HashMap<>();
         menuDescriptions = new HashMap<>();
-        header = "LOGOWANIE";
+        header = "PANEL RECEPCJONISTY";
 
         try
         {
@@ -35,7 +35,7 @@ class AdminPanelMenu extends BaseMenu
         menuDescriptions.put(6, "Usuń pokój");
         menuDescriptions.put(7, "Dodaj użytkownika");
         menuDescriptions.put(8, "Usuń użytkownika");
-        menuDescriptions.put(9, "Powrót");
+        menuDescriptions.put(9, "Wyloguj");
         menuDescriptions.put(10, "Wyjście");
     }
 
@@ -79,7 +79,7 @@ class AdminPanelMenu extends BaseMenu
 
     }
 
-    public LogInMenu goBack()
+    public BaseMenu goBack()
     {
         return new LogInMenu();
     }

@@ -36,7 +36,7 @@ class ClientPanelMenu extends BaseMenu
 
     }
 
-    public LogInMenu goBack()
+    public BaseMenu goBack()
     {
         return new LogInMenu();
     }

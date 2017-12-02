@@ -24,7 +24,7 @@ class MainMenu extends BaseMenu
         menuDescriptions.put(3, "Wyjście");
     }
 
-    public LogInMenu logIn()
+    public BaseMenu logIn()
     {
         return new LogInMenu();
     }
