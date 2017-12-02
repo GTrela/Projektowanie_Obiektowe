@@ -44,11 +44,36 @@ class MainMenu extends BaseMenu
 
         long clientID = hotel.addClient(name, surname);
 
-        System.out.println("Został utworzony profil o ID: " + clientID);
-        System.out.printf("Czy chcesz wrócić do menu głównego czy strony logowania? (1/2): ");
-        int answer = scanner.nextInt();
+        System.out.println("\nZostał utworzony profil o ID: " + clientID);
+        System.out.printf("Powrót do menu głównego [1] czy strony logowania [2]? ");
 
-        if (answer == 1)
+        boolean correctInput = false;
+        int option = 0;
+
+        do
+        {
+            if (scanner.hasNextInt())
+            {
+                option = scanner.nextInt();
+
+                if (option == 1 || option == 2)
+                {
+                    correctInput = true;
+                }
+                else
+                {
+                    System.out.print("Błędny numer opcji. Spróbuj ponownie: ");
+                }
+            }
+            else
+            {
+                System.out.print("Błędny numer opcji. Spróbuj ponownie: ");
+                scanner.next();
+            }
+        }
+        while(!correctInput);
+
+        if (option == 1)
         {
             return new MainMenu();
         }

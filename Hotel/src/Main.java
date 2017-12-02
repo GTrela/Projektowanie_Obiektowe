@@ -15,44 +15,45 @@ public class Main
 
 		while(true)
 		{
-			boolean rError = true;
+			boolean correctInput = false;
 			int option;
 			System.out.print(menu);
-            System.out.print("\nPodaj numer opcji: ");
 
-            while(rError)
+			do
 			{
+				System.out.print("\nPodaj numer opcji: ");
 				if (scanner.hasNextInt())
 				{
 					option = scanner.nextInt();
+					int rangeStart = 1;
+					int rangeEnd = menu.getMenuActions().keySet().size();
 
-					try
+					if (option >= rangeStart && option <= rangeEnd)
 					{
-						Method method = menu.getAction(option);
-
-						while (method == null)
+						try
 						{
-							System.out.print("Błędny numer opcji [1]. Spróbuj ponownie: ");
-							option = scanner.nextInt();
-							method = menu.getAction(option);
+							Method method = menu.getAction(option);
+							menu = (BaseMenu) method.invoke(menu);
+						}
+						catch (Exception e)
+						{
+							e.printStackTrace();
 						}
 
-						menu = (BaseMenu) method.invoke(menu);
+						correctInput = true;
 					}
-					catch (Exception e)
+					else
 					{
-						e.printStackTrace();
+						System.out.print("Błędny numer opcji. Spróbuj ponownie.");
 					}
 				}
 				else
 				{
-					System.out.print("Błędny numer opcji [2]. Spróbuj ponownie: ");
+					System.out.print("Błędny numer opcji. Spróbuj ponownie.");
 					scanner.next();
-					continue;
 				}
-
-				rError = false;
 			}
+			while(!correctInput);
 
 			System.out.print("\033[H\033[2J");
 			System.out.flush();
