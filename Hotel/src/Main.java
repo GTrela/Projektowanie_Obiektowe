@@ -17,6 +17,7 @@ public class Main
 		while(condtition)
 		{
 			System.out.print(menu);
+            System.out.print("\nPodaj numer opcji: ");
 			int option = scanner.nextInt();
 
 			try

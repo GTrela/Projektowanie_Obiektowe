@@ -79,13 +79,13 @@ class AdminPanelMenu extends BaseMenu
 
     }
 
-    public void goBack()
+    public LogInMenu goBack()
     {
-
+        return new LogInMenu();
     }
 
     public void exit()
     {
-
+        System.exit(0);
     }
 }

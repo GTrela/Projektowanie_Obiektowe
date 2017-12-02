@@ -37,8 +37,18 @@ abstract class BaseMenu
     public String toString()
     {
         StringBuilder builder = new StringBuilder();
+        String logo = "\n" +
+                "       _   _       _       _   _____          \n" +
+                "      | | | |     | |     | | |_   _|         \n" +
+                "      | |_| | ___ | |_ ___| |   | |_   _ _ __ \n" +
+                "      |  _  |/ _ \\| __/ _ \\ |   | | | | | '__|\n" +
+                "      | | | | (_) | ||  __/ |   | | |_| | |   \n" +
+                "      \\_| |_/\\___/ \\__\\___|_|   \\_/\\__,_|_|   \n" +
+                "                                version 1.0\n" +
+                "                                        \n";
         String separator = "+" + String.join("", Collections.nCopies(50, "-")) + "+\n";
 
+        builder.append(logo);
         builder.append(separator);
         builder.append("|");
 

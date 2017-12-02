@@ -35,5 +35,6 @@ class MainMenu extends BaseMenu
 
     public void exit()
     {
+        System.exit(0);
     }
 }

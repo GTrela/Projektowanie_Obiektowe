@@ -36,13 +36,13 @@ class LogInMenu extends BaseMenu
 
     }
 
-    public void goBack()
+    public MainMenu goBack()
     {
-
+        return new MainMenu();
     }
 
     public void exit()
     {
-
+        System.exit(0);
     }
 }
