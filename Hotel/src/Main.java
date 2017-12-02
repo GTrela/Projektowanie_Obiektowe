@@ -1,6 +1,4 @@
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.InputMismatchException;
+import java.lang.reflect.Method;
 import java.util.Scanner;
 
 public class Main
@@ -8,7 +6,42 @@ public class Main
 
 	public static void main(String[] args)
 	{
+		BaseMenu menu = new MainMenu();
+		System.out.print("\033[H\033[2J");
+		System.out.flush();
+
 		Scanner scanner = new Scanner(System.in);
+		scanner.useDelimiter("\n");
+		boolean condtition = true;
+
+		while(condtition)
+		{
+			System.out.print(menu);
+			int option = scanner.nextInt();
+
+			try
+			{
+				Method method = menu.getAction(option);
+
+				while (method == null)
+				{
+					System.out.println("Błędny numer opcji. Spróbuj ponownie: ");
+					option = scanner.nextInt();
+					method = menu.getAction(option);
+				}
+
+				menu = (BaseMenu) method.invoke(menu);
+			}
+			catch (Exception e)
+			{
+				e.printStackTrace();
+			}
+
+			System.out.print("\033[H\033[2J");
+			System.out.flush();
+		}
+
+		/*Scanner scanner = new Scanner(System.in);
 		scanner.useDelimiter("\n");
 
 		System.out.println("Witaj w systemie hotelu Relaks!");
@@ -36,7 +69,7 @@ public class Main
 							System.out.printf("Podaj hasło:\n");
 							String pass = scanner.next();
 
-							if (hotel.isAdminPassCorrect(pass))
+							if (hotel.isSystemPassCorrect(pass))
 							{
 								currentUserId = 1;
 								condtition = false;
@@ -213,7 +246,7 @@ public class Main
 					try
 					{
 						System.out.println("Podaj liczbę łóżek:");
-						long n0fBeds = scanner.nextLong();
+						int n0fBeds = scanner.nextInt();
 						System.out.println("Podaj opis pokoju:");
 						String roomDescription = scanner.next();
 						System.out.println("Podaj komfort pokoju (standardowy, rodzinny, apartament, luksusowy):");
@@ -295,5 +328,6 @@ public class Main
 		DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("d/M/yyyy");
 		LocalDate date = LocalDate.parse(userInput, dateFormat);
 		return date;
+	}*/
 	}
 }

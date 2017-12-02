@@ -38,11 +38,10 @@ class SeasonalFee
     @Override
     public String toString()
     {
-        return "Sezon= "
+        return "Sezon = "
 		        + eventName + '\'' +
-                ", data początkowa=" + startDate +
-                ", data końcowa=" + endDate +
-                ", oplata=" + fee +
-                '}';
+                ", data początkowa = " + startDate +
+                ", data końcowa = " + endDate +
+                ", oplata = " + fee;
     }
 }

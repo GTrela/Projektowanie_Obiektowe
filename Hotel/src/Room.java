@@ -1,11 +1,11 @@
 class Room implements Comparable<Room>
 {
 	long nr;
-	long nOfBeds;
+	int nOfBeds;
 	String description;
 	Comfort comfort;
 
-	public Room(long nr, long nOfBeds, String description, Comfort comfort)
+	public Room(long nr, int nOfBeds, String description, Comfort comfort)
 	{
 		this.nr = nr;
 		this.nOfBeds = nOfBeds;
@@ -13,7 +13,7 @@ class Room implements Comparable<Room>
 		this.comfort = comfort;
 	}
 
-	public Room(long nr, long nOfBeds, String description)
+	public Room(long nr, int nOfBeds, String description)
 	{
 		this.nr = nr;
 		this.nOfBeds = nOfBeds;
@@ -21,7 +21,7 @@ class Room implements Comparable<Room>
 		this.comfort = Comfort.standardowy;
 	}
 
-	public Room(long nr, long nOfBeds)
+	public Room(long nr, int nOfBeds)
 	{
 		this.nr = nr;
 		this.nOfBeds = nOfBeds;
@@ -34,7 +34,7 @@ class Room implements Comparable<Room>
 		return nr;
 	}
 
-	public long getnOfBeds()
+	public int getnOfBeds()
 	{
 		return nOfBeds;
 	}

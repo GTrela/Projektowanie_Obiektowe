@@ -13,9 +13,9 @@ class Hotel
 	private long reservationNumber;
 	private long roomNumber;
 	private long clientNumber;
-	private String password;
+	private String systemPassword;
 
-	public static Hotel getInstance ()
+	public static Hotel getInstance()
 	{
 		if (self == null)
 		{
@@ -34,12 +34,16 @@ class Hotel
 		reservationNumber = 1;
 		roomNumber = 1;
 		clientNumber = 1;
-		password = "QMyWpYKgNGVXUYUjgZPiD6ahNcgbAm";
+		systemPassword = "QMyWpYKgNGVXUYUjgZPiD6ahNcgbAm";
 	}
 
-	public boolean isAdminPassCorrect(String pass)
+	public boolean isSystemPassCorrect(String pass)
 	{
-		return pass.equals(password);
+		return pass.equals(systemPassword);
+	}
+	public void setPath(String path)
+	{
+		this.path = path;
 	}
 
 	public void Init(String path)
@@ -66,11 +70,6 @@ class Hotel
 		loadRooms();
 		loadReservations();
 		loadSeasonalFees();
-	}
-
-	public void setPath(String path)
-	{
-		this.path = path;
 	}
 
 	// Configuration management
@@ -103,6 +102,7 @@ class Hotel
 				return false;
 			}
 		}
+
 		return true;
 	}
 
@@ -141,6 +141,7 @@ class Hotel
 			e.printStackTrace();
 			return false;
 		}
+
 		return true;
 	}
 
@@ -158,7 +159,7 @@ class Hotel
 				String[] roomParam = line.split(cvsSplitBy);
 				if (roomParam.length == 4)
 				{
-					Room room = new Room(Long.parseLong(roomParam[0]), Long.parseLong(roomParam[1]), roomParam[2], Comfort.valueOf(roomParam[3]));
+					Room room = new Room(Long.parseLong(roomParam[0]), Integer.parseInt(roomParam[1]), roomParam[2], Comfort.valueOf(roomParam[3]));
 					Rooms.put(Long.parseLong(roomParam[0]), room);
 				}
 			}
@@ -173,6 +174,7 @@ class Hotel
 			e.printStackTrace();
 			return false;
 		}
+
 		return true;
 	}
 
@@ -202,7 +204,7 @@ class Hotel
 		}
 	}
 
-	public long addRoom (long nOfBeds, String description, Comfort comfort)
+	public long addRoom (int nOfBeds, String description, Comfort comfort)
 	{
 		Room room = new Room(roomNumber, nOfBeds, description, comfort);
 		Rooms.put(roomNumber, room);
@@ -218,6 +220,7 @@ class Hotel
 				throw new RoomInUse(number);
 			}
 		}
+
 		Rooms.remove(number);
 	}
 
@@ -251,6 +254,7 @@ class Hotel
 			e.printStackTrace();
 			return false;
 		}
+
 		return true;
 	}
 
@@ -298,6 +302,7 @@ class Hotel
 				Reservations.remove(reservation.getId());
 			}
 		}
+
 		Clients.remove(id);
 	}
 
@@ -338,6 +343,7 @@ class Hotel
 			e.printStackTrace();
 			return false;
 		}
+
 		return true;
 	}
 
@@ -404,6 +410,7 @@ class Hotel
 			startDate = endDate;
 			endDate = temp;
 		}
+
 		return !(dateToCheck.isBefore(startDate) || dateToCheck.isAfter(endDate));
 	}
 
@@ -438,7 +445,7 @@ class Hotel
 		return rooms;
 	}
 
-	public Map<Long, Room> selectRooms(List<Long> roomsList, long nOfBeds) throws NoEnoughtBeds
+	public Map<Long, Room> selectRooms(List<Long> roomsList, long nOfBeds) throws NotEnoughBeds
 	{
 		Map<Long, Room> tempRooms = new HashMap<>();
 		Map<Long, Room> selectedRooms = new HashMap<>();
@@ -453,7 +460,7 @@ class Hotel
 
 		for (Map.Entry<Long, Room> entry : tempRooms.entrySet())
 		{
-			Long availableBeds = entry.getValue().getnOfBeds();
+			int availableBeds = entry.getValue().getnOfBeds();
 
 			if (beds > 0)
 			{
@@ -464,7 +471,7 @@ class Hotel
 
 		if (beds > 0)
 		{
-			throw new NoEnoughtBeds();
+			throw new NotEnoughBeds();
 		}
 
 		return selectedRooms;
@@ -532,7 +539,7 @@ class Hotel
 		return totalSum;
 	}
 
-	public Reservation checkReservation(long clientId, LocalDate checkInDate, LocalDate checkOutDate, long nOfBeds) throws NoEnoughtBeds, NoVacantRooms
+	public Reservation checkReservation(long clientId, LocalDate checkInDate, LocalDate checkOutDate, long nOfBeds) throws NotEnoughBeds, NoVacantRooms
 	{
 		List<Long> roomList = getVacantRooms(checkInDate, checkOutDate);
 		Map<Long, Room> roomMap = selectRooms(roomList, nOfBeds);
@@ -565,11 +572,11 @@ class Hotel
 		{
 			while ((line = br.readLine()) != null)
 			{
-				String[] seasonalfeeParam = line.split(cvsSplitBy);
-				if (seasonalfeeParam.length == 4)
+				String[] seasonalFeeParam = line.split(cvsSplitBy);
+				if (seasonalFeeParam.length == 4)
 				{
-					SeasonalFee seasonalFee = new SeasonalFee(seasonalfeeParam[0], LocalDate.parse(seasonalfeeParam[1]), LocalDate.parse(seasonalfeeParam[2]), Double.parseDouble(seasonalfeeParam[3]));
-					SeasonalFees.put(seasonalfeeParam[0], seasonalFee);
+					SeasonalFee seasonalFee = new SeasonalFee(seasonalFeeParam[0], LocalDate.parse(seasonalFeeParam[1]), LocalDate.parse(seasonalFeeParam[2]), Double.parseDouble(seasonalFeeParam[3]));
+					SeasonalFees.put(seasonalFeeParam[0], seasonalFee);
 				}
 			}
 
@@ -583,6 +590,7 @@ class Hotel
 			e.printStackTrace();
 			return false;
 		}
+
 		return true;
 	}
 

@@ -9,8 +9,8 @@ class HotelTest
     void isAdminPassCorrect()
     {
         Hotel hotel = Hotel.getInstance();
-        assertFalse(hotel.isAdminPassCorrect("BłędneHasło"));
-        assertTrue(hotel.isAdminPassCorrect("QMyWpYKgNGVXUYUjgZPiD6ahNcgbAm"));
+        assertFalse(hotel.isSystemPassCorrect("BłędneHasło"));
+        assertTrue(hotel.isSystemPassCorrect("QMyWpYKgNGVXUYUjgZPiD6ahNcgbAm"));
     }
 
     @org.junit.jupiter.api.Test

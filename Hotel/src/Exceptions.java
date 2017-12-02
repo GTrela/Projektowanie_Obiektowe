@@ -7,8 +7,8 @@ class NoVacantRooms extends Exception {
 	}
 }
 
-class NoEnoughtBeds extends Exception {
-	public NoEnoughtBeds()
+class NotEnoughBeds extends Exception {
+	public NotEnoughBeds()
 	{
 		super("W dostępnych pokojach, nie ma wystarczającej ilości wolnych łózek!");
 	}
