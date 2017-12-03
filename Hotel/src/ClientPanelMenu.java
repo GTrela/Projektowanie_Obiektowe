@@ -189,10 +189,7 @@ class ClientPanelMenu extends BaseMenu
         }
         else
         {
-            System.out.printf("\nNaciśnij ENTER, aby powrócić do głównej strony panelu...");
-
-            scanner.next();
-
+            scanner.nextLine();
             return new ClientPanelMenu(currentUserID);
         }
     }
@@ -219,7 +216,7 @@ class ClientPanelMenu extends BaseMenu
 
         if (noReservations)
         {
-            System.out.println("Brak rezerwacji.");
+            System.out.println("\nBrak rezerwacji.");
         }
 
         System.out.printf("\nNaciśnij ENTER, aby powrócić do głównej strony panelu...\n");

@@ -435,10 +435,7 @@ class AdminPanelMenu extends BaseMenu
         }
         else
         {
-            System.out.printf("\nNaciśnij ENTER, aby powrócić do głównej strony panelu...");
-
-            scanner.next();
-
+            scanner.nextLine();
             return new AdminPanelMenu();
         }
     }
