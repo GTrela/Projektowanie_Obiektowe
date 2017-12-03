@@ -1,4 +1,5 @@
 import java.util.HashMap;
+import java.util.Scanner;
 
 class AdminPanelMenu extends BaseMenu
 {
@@ -21,8 +22,7 @@ class AdminPanelMenu extends BaseMenu
             menuActions.put(9, AdminPanelMenu.class.getMethod("logout"));
             menuActions.put(10, AdminPanelMenu.class.getMethod("exit"));
 
-        }
-        catch (Exception e)
+        } catch (Exception e)
         {
             e.printStackTrace();
         }
@@ -46,7 +46,6 @@ class AdminPanelMenu extends BaseMenu
 
     public void checkReservation()
     {
-
     }
 
     public void addReservation()
@@ -59,9 +58,97 @@ class AdminPanelMenu extends BaseMenu
 
     }
 
-    public void addRoom()
+    public BaseMenu addRoom()
     {
+        Scanner scanner = new Scanner(System.in);
+        scanner.useDelimiter("\n");
+        int numberOfBeds = -1;
+        String description = "";
+        String roomComfort = "";
 
+        try
+        {
+            System.out.print("\nPodaj ilość łóżek: ");
+            boolean correctInput = false;
+
+            do
+            {
+                if (scanner.hasNextInt())
+                {
+                    numberOfBeds = scanner.nextInt();
+
+                    if (numberOfBeds > 0)
+                    {
+                        correctInput = true;
+                    }
+                    else
+                    {
+                        System.out.print("Błędna ilość łóżek. Spróbuj ponownie: ");
+                    }
+                }
+                else
+                {
+                    System.out.print("Błędna ilość łóżek. Spróbuj ponownie: ");
+                    scanner.next();
+                }
+            }
+            while(!correctInput);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+
+        try
+        {
+            System.out.print("Podaj opis pokoju: ");
+            description = scanner.nextLine();
+            description += scanner.nextLine();
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+
+        try
+        {
+            System.out.print("Podaj komfort pokoju (standardowy, rodzinny, apartament, luksusowy): ");
+            boolean correctInput = false;
+
+            do
+            {
+                roomComfort = scanner.next();
+
+                for (Comfort c : Comfort.values())
+                {
+                    if (c.name().equals(roomComfort))
+                    {
+                        correctInput = true;
+                    }
+                }
+
+                if (!correctInput)
+                {
+                    System.out.print("Błędna nazwa, spróbuj ponownie: ");
+                }
+            }
+            while(!correctInput);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+
+        Hotel hotel = Hotel.getInstance();
+        long roomID = hotel.addRoom(numberOfBeds, description, Comfort.valueOf(roomComfort));
+
+        System.out.println("\nZostał dodany pokój o ID: " + roomID);
+        System.out.printf("\nNaciśnij ENTER, aby powrócić do głównej strony panelu...");
+
+        scanner.next();
+        hotel.getRooms();
+
+        return new AdminPanelMenu();
     }
 
     public void removeRoom()
@@ -86,6 +173,8 @@ class AdminPanelMenu extends BaseMenu
 
     public void exit()
     {
+        Hotel hotel = Hotel.getInstance();
+        hotel.saveData();
         System.exit(0);
     }
 }

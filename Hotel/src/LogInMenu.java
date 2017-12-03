@@ -108,6 +108,8 @@ class LogInMenu extends BaseMenu
 
     public void exit()
     {
+        Hotel hotel = Hotel.getInstance();
+        hotel.saveData();
         System.exit(0);
     }
 }
