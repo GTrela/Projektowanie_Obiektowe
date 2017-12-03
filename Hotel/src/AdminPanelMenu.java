@@ -146,7 +146,6 @@ class AdminPanelMenu extends BaseMenu
         System.out.printf("\nNaciśnij ENTER, aby powrócić do głównej strony panelu...");
 
         scanner.next();
-        hotel.getRooms();
 
         return new AdminPanelMenu();
     }
@@ -156,9 +155,26 @@ class AdminPanelMenu extends BaseMenu
 
     }
 
-    public void addUser()
+    public BaseMenu addUser()
     {
+        Hotel hotel = Hotel.getInstance();
+        Scanner scanner = new Scanner(System.in);
+        scanner.useDelimiter("\n");
 
+        System.out.printf("\nPodaj imię: ");
+        String name = scanner.next();
+
+        System.out.printf("Podaj nazwisko: ");
+        String surname = scanner.next();
+
+        long clientID = hotel.addClient(name, surname);
+
+        System.out.println("\nZostał utworzony profil o ID: " + clientID);
+        System.out.printf("\nNaciśnij ENTER, aby powrócić do głównej strony panelu...");
+
+        scanner.next();
+
+        return new AdminPanelMenu();
     }
 
     public void removeUser()
