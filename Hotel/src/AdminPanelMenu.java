@@ -40,7 +40,7 @@ class AdminPanelMenu extends BaseMenu
         menuDescriptions.put(2, "Sprawdź rezerwację"); //
         menuDescriptions.put(3, "Wyświetl rezerwacje"); //
         menuDescriptions.put(4, "Dodaj rezerwację");
-        menuDescriptions.put(5, "Usuń rezerwację"); //
+        menuDescriptions.put(5, "Usuń rezerwację");
         menuDescriptions.put(6, "Wyświetl okresy specjalne");
         menuDescriptions.put(7, "Dodaj okres specjalny");
         menuDescriptions.put(8, "Usuń okres specjalny");
@@ -386,9 +386,47 @@ class AdminPanelMenu extends BaseMenu
         }
     }
 
-    public void deleteReservation()
+    public BaseMenu deleteReservation()
     {
+        Hotel hotel = Hotel.getInstance();
+        Scanner scanner = new Scanner(System.in);
+        scanner.useDelimiter("\n");
 
+        System.out.print("\nPodaj ID rezerwacji: ");
+
+        boolean correctInput = false;
+        long reservationID = 0;
+
+        do
+        {
+            if (scanner.hasNextLong())
+            {
+                reservationID = scanner.nextLong();
+
+                if (hotel.getReservations().get(reservationID) != null)
+                {
+                    correctInput = true;
+                }
+                else
+                {
+                    System.out.print("Rezerwacja o takim ID nie istnieje, spróbuj ponownie: ");
+                }
+            }
+            else
+            {
+                System.out.print("Rezerwacja o takim ID nie istnieje, spróbuj ponownie: ");
+                scanner.next();
+            }
+        }
+        while(!correctInput);
+
+        hotel.deleteReservation(reservationID);
+        System.out.println("\nRezerwacja o ID " + reservationID + " została usunięta.");
+        System.out.printf("\nNaciśnij ENTER, aby powrócić do głównej strony panelu...");
+
+        scanner.next();
+
+        return new AdminPanelMenu();
     }
 
     public BaseMenu showSeasonalFees()
