@@ -26,7 +26,7 @@ class Hotel
 
 	private Hotel()
 	{
-		path = "out/production/Hotel/";
+		path = System.getProperty("user.dir");
 		Clients = new HashMap<>();
 		Rooms = new HashMap<>();
 		Reservations = new HashMap<>();
@@ -46,17 +46,8 @@ class Hotel
 		this.path = path;
 	}
 
-	public void Init(String path)
+	public void Init()
 	{
-		if (new File(path).exists())
-		{
-			setPath(path);
-		}
-		else
-		{
-			this.path = "out/production/Hotel/";
-			System.out.printf("Taki folder nie istnieje. Tworzę folder: %s\n",this.path);
-		}
 		loadConf();
 		loadClients();
 		loadRooms();
@@ -69,8 +60,7 @@ class Hotel
 	{
 		String line = "";
 		String cvsSplitBy = ",";
-		String confPath = path + "conf.csv";
-
+		String confPath = path + "/Data/conf.csv";
 		File f = new File(confPath);
 
 		if (f.exists() && !f.isDirectory())
@@ -94,6 +84,34 @@ class Hotel
 				return false;
 			}
 		}
+		else
+		{
+			StringBuilder builder = new StringBuilder();
+
+			try
+			{
+				f.getParentFile().mkdirs();
+				f.createNewFile();
+			}
+			catch (IOException e)
+			{
+				e.printStackTrace();;
+			}
+
+			try (FileWriter outFile = new FileWriter(f))
+			{
+				builder.append(reservationNumber);
+				builder.append(",");
+				builder.append(roomNumber);
+				builder.append(",");
+				builder.append(clientNumber);
+				outFile.write(builder.toString());
+			}
+			catch (IOException e)
+			{
+				e.printStackTrace();
+			}
+		}
 
 		return true;
 	}
@@ -101,9 +119,23 @@ class Hotel
 	public void saveConf()
 	{
 		StringBuilder builder = new StringBuilder();
-		String confPath = path + "conf.csv";
+		String confPath = path + "/Data/conf.csv";
+		File f = new File(confPath);
 
-		try (FileWriter outFile = new FileWriter(confPath))
+		if (!f.exists())
+		{
+			try
+			{
+				f.getParentFile().mkdirs();
+				f.createNewFile();
+			}
+			catch (IOException e)
+			{
+				e.printStackTrace();;
+			}
+		}
+
+		try (FileWriter outFile = new FileWriter(f))
 		{
 			builder.append(reservationNumber);
 			builder.append(",");
@@ -142,29 +174,47 @@ class Hotel
 	{
 		String line = "";
 		String cvsSplitBy = ",";
-		String roomsPath = path + "rooms.csv";
+		String roomsPath = path + "/Data/rooms.csv";
+		File f = new File(roomsPath);
 
-		try (BufferedReader br = new BufferedReader(new FileReader(roomsPath)))
+		if (f.exists() && !f.isDirectory())
 		{
-			while ((line = br.readLine()) != null)
+			try (BufferedReader br = new BufferedReader(new FileReader(roomsPath)))
 			{
-				String[] roomParam = line.split(cvsSplitBy);
-				if (roomParam.length == 4)
+				while ((line = br.readLine()) != null)
 				{
-					Room room = new Room(Long.parseLong(roomParam[0]), Integer.parseInt(roomParam[1]), roomParam[2], Comfort.valueOf(roomParam[3]));
-					Rooms.put(Long.parseLong(roomParam[0]), room);
+					String[] roomParam = line.split(cvsSplitBy);
+					if (roomParam.length == 4)
+					{
+						Room room = new Room(Long.parseLong(roomParam[0]), Integer.parseInt(roomParam[1]), roomParam[2], Comfort.valueOf(roomParam[3]));
+						Rooms.put(Long.parseLong(roomParam[0]), room);
+					}
 				}
-			}
 
+			}
+			catch (FileNotFoundException ex)
+			{
+				return false;
+			}
+			catch (IOException e)
+			{
+				e.printStackTrace();
+				return false;
+			}
 		}
-		catch (FileNotFoundException ex)
+		else
 		{
-			return false;
-		}
-		catch (IOException e)
-		{
-			e.printStackTrace();
-			return false;
+			StringBuilder builder = new StringBuilder();
+
+			try
+			{
+				f.getParentFile().mkdirs();
+				f.createNewFile();
+			}
+			catch (IOException e)
+			{
+				e.printStackTrace();;
+			}
 		}
 
 		return true;
@@ -173,7 +223,21 @@ class Hotel
 	public void saveRooms()
 	{
 		StringBuilder builder = new StringBuilder();
-		String roomsPath = path + "rooms.csv";
+		String roomsPath = path + "/Data/rooms.csv";
+		File f = new File(roomsPath);
+
+		if (!f.exists())
+		{
+			try
+			{
+				f.getParentFile().mkdirs();
+				f.createNewFile();
+			}
+			catch (IOException e)
+			{
+				e.printStackTrace();;
+			}
+		}
 
 		try (FileWriter outFile = new FileWriter(roomsPath))
 		{
@@ -221,30 +285,48 @@ class Hotel
 	{
 		String line = "";
 		String cvsSplitBy = ",";
-		String clientsPath = path + "clients.csv";
+		String clientsPath = path + "/Data/clients.csv";
+		File f = new File(clientsPath);
 
-		try (BufferedReader br = new BufferedReader(new FileReader(clientsPath)))
+		if (f.exists() && !f.isDirectory())
 		{
-			Clients = new HashMap<>();
-			while ((line = br.readLine()) != null)
+			try (BufferedReader br = new BufferedReader(new FileReader(clientsPath)))
 			{
-				String[] clientParam = line.split(cvsSplitBy);
-				if (clientParam.length == 4)
+				Clients = new HashMap<>();
+				while ((line = br.readLine()) != null)
 				{
-					Client client = new Client(Long.parseLong(clientParam[0]), clientParam[1], clientParam[2],Integer.parseInt(clientParam[3]));
-					Clients.put(Long.parseLong(clientParam[0]), client);
+					String[] clientParam = line.split(cvsSplitBy);
+					if (clientParam.length == 4)
+					{
+						Client client = new Client(Long.parseLong(clientParam[0]), clientParam[1], clientParam[2],Integer.parseInt(clientParam[3]));
+						Clients.put(Long.parseLong(clientParam[0]), client);
+					}
 				}
-			}
 
+			}
+			catch (FileNotFoundException ex)
+			{
+				return false;
+			}
+			catch (IOException e)
+			{
+				e.printStackTrace();
+				return false;
+			}
 		}
-		catch (FileNotFoundException ex)
+		else
 		{
-			return false;
-		}
-		catch (IOException e)
-		{
-			e.printStackTrace();
-			return false;
+			StringBuilder builder = new StringBuilder();
+
+			try
+			{
+				f.getParentFile().mkdirs();
+				f.createNewFile();
+			}
+			catch (IOException e)
+			{
+				e.printStackTrace();;
+			}
 		}
 
 		return true;
@@ -253,7 +335,21 @@ class Hotel
 	public void saveClients()
 	{
 		StringBuilder builder = new StringBuilder();
-		String clientsPath = path + "clients.csv";
+		String clientsPath = path + "/Data/clients.csv";
+		File f = new File(clientsPath);
+
+		if (!f.exists())
+		{
+			try
+			{
+				f.getParentFile().mkdirs();
+				f.createNewFile();
+			}
+			catch (IOException e)
+			{
+				e.printStackTrace();;
+			}
+		}
 
 		try (FileWriter outFile = new FileWriter(clientsPath))
 		{
@@ -301,37 +397,55 @@ class Hotel
 	{
 		String line = "";
 		String cvsSplitBy = ",";
-		String reservationsPath = path + "reservations.csv";
+		String reservationsPath = path + "/Data/reservations.csv";
+		File f = new File(reservationsPath);
 
-		try (BufferedReader br = new BufferedReader(new FileReader(reservationsPath)))
+		if (f.exists() && !f.isDirectory())
 		{
-			Reservations = new HashMap<>();
-			while ((line = br.readLine()) != null)
+			try (BufferedReader br = new BufferedReader(new FileReader(reservationsPath)))
 			{
-				String[] reservationParam = line.split(cvsSplitBy);
-				if (reservationParam.length > 5)
+				Reservations = new HashMap<>();
+				while ((line = br.readLine()) != null)
 				{
-					List<Long> roomsIdList = new ArrayList<>();
-					for (int i = 5; i < reservationParam.length; i++)
+					String[] reservationParam = line.split(cvsSplitBy);
+					if (reservationParam.length > 5)
 					{
-						roomsIdList.add(Long.parseLong(reservationParam[i]));
+						List<Long> roomsIdList = new ArrayList<>();
+						for (int i = 5; i < reservationParam.length; i++)
+						{
+							roomsIdList.add(Long.parseLong(reservationParam[i]));
+						}
+
+						Reservation reservation = new Reservation(Long.parseLong(reservationParam[0]), LocalDate.parse(reservationParam[1]),
+								LocalDate.parse(reservationParam[2]), Long.parseLong(reservationParam[3]), Double.parseDouble(reservationParam[4]), roomsIdList);
+						Reservations.put(Long.parseLong(reservationParam[0]), reservation);
 					}
-
-					Reservation reservation = new Reservation(Long.parseLong(reservationParam[0]), LocalDate.parse(reservationParam[1]),
-							LocalDate.parse(reservationParam[2]), Long.parseLong(reservationParam[3]), Double.parseDouble(reservationParam[4]), roomsIdList);
-					Reservations.put(Long.parseLong(reservationParam[0]), reservation);
 				}
-			}
 
+			}
+			catch (FileNotFoundException ex)
+			{
+				return false;
+			}
+			catch (IOException e)
+			{
+				e.printStackTrace();
+				return false;
+			}
 		}
-		catch (FileNotFoundException ex)
+		else
 		{
-			return false;
-		}
-		catch (IOException e)
-		{
-			e.printStackTrace();
-			return false;
+			StringBuilder builder = new StringBuilder();
+
+			try
+			{
+				f.getParentFile().mkdirs();
+				f.createNewFile();
+			}
+			catch (IOException e)
+			{
+				e.printStackTrace();;
+			}
 		}
 
 		return true;
@@ -340,7 +454,21 @@ class Hotel
 	public void saveReservations()
 	{
 		StringBuilder builder = new StringBuilder();
-		String reservationsPath = path + "reservations.csv";
+		String reservationsPath = path + "/Data/reservations.csv";
+		File f = new File(reservationsPath);
+
+		if (!f.exists())
+		{
+			try
+			{
+				f.getParentFile().mkdirs();
+				f.createNewFile();
+			}
+			catch (IOException e)
+			{
+				e.printStackTrace();;
+			}
+		}
 
 		try (FileWriter outFile = new FileWriter(reservationsPath))
 		{
@@ -556,29 +684,47 @@ class Hotel
 	{
 		String line = "";
 		String cvsSplitBy = ",";
-		String seasonalFeePath = path + "seasonalfees.csv";
+		String seasonalFeePath = path + "/Data/seasonalfees.csv";
+		File f = new File(seasonalFeePath);
 
-		try (BufferedReader br = new BufferedReader(new FileReader(seasonalFeePath)))
+		if (f.exists() && !f.isDirectory())
 		{
-			while ((line = br.readLine()) != null)
+			try (BufferedReader br = new BufferedReader(new FileReader(seasonalFeePath)))
 			{
-				String[] seasonalFeeParam = line.split(cvsSplitBy);
-				if (seasonalFeeParam.length == 4)
+				while ((line = br.readLine()) != null)
 				{
-					SeasonalFee seasonalFee = new SeasonalFee(seasonalFeeParam[0], LocalDate.parse(seasonalFeeParam[1]), LocalDate.parse(seasonalFeeParam[2]), Double.parseDouble(seasonalFeeParam[3]));
-					SeasonalFees.put(seasonalFeeParam[0], seasonalFee);
+					String[] seasonalFeeParam = line.split(cvsSplitBy);
+					if (seasonalFeeParam.length == 4)
+					{
+						SeasonalFee seasonalFee = new SeasonalFee(seasonalFeeParam[0], LocalDate.parse(seasonalFeeParam[1]), LocalDate.parse(seasonalFeeParam[2]), Double.parseDouble(seasonalFeeParam[3]));
+						SeasonalFees.put(seasonalFeeParam[0], seasonalFee);
+					}
 				}
-			}
 
+			}
+			catch (FileNotFoundException ex)
+			{
+				return false;
+			}
+			catch (IOException e)
+			{
+				e.printStackTrace();
+				return false;
+			}
 		}
-		catch (FileNotFoundException ex)
+		else
 		{
-			return false;
-		}
-		catch (IOException e)
-		{
-			e.printStackTrace();
-			return false;
+			StringBuilder builder = new StringBuilder();
+
+			try
+			{
+				f.getParentFile().mkdirs();
+				f.createNewFile();
+			}
+			catch (IOException e)
+			{
+				e.printStackTrace();;
+			}
 		}
 
 		return true;
@@ -587,7 +733,21 @@ class Hotel
 	public void saveSeasonalFees()
 	{
 		StringBuilder builder = new StringBuilder();
-		String seasonalFeePath = path + "seasonalfees.csv";
+		String seasonalFeePath = path + "/Data/seasonalfees.csv";
+		File f = new File(seasonalFeePath);
+
+		if (!f.exists())
+		{
+			try
+			{
+				f.getParentFile().mkdirs();
+				f.createNewFile();
+			}
+			catch (IOException e)
+			{
+				e.printStackTrace();;
+			}
+		}
 
 		try (FileWriter outFile = new FileWriter(seasonalFeePath))
 		{

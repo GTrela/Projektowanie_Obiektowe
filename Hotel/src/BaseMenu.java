@@ -1,4 +1,7 @@
 import java.lang.reflect.Method;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.Collections;
 import java.util.Map;
 
@@ -32,6 +35,23 @@ abstract class BaseMenu
     public Map<Integer, String> getActionDescriptions()
     {
         return menuDescriptions;
+    }
+
+    public static LocalDate dateInput(String userInput)
+    {
+        DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("d/M/yyyy");
+        LocalDate date;
+
+        try
+        {
+            date = LocalDate.parse(userInput, dateFormat);
+        }
+        catch (DateTimeParseException e)
+        {
+            return null;
+        }
+
+        return date;
     }
 
     @Override

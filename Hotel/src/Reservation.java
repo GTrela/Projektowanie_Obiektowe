@@ -60,7 +60,7 @@ class Reservation
 		builder.append(checkInDate);
 		builder.append(" Data wymeldowania: ");
 		builder.append(checkOutDate);
-		builder.append("\nSklada sie z pokoi:\n");
+		builder.append("\nZarezerwowane pokoje:\n");
 
         Hotel hotel = Hotel.getInstance();
 

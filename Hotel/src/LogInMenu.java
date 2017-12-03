@@ -60,15 +60,35 @@ class LogInMenu extends BaseMenu
         scanner.useDelimiter("\n");
 
         System.out.print("\nPodaj swój identyfikator: ");
-        long clientID = scanner.nextLong();
+
+        boolean correctInput = false;
+        long clientID = 0;
         int counter = 0;
 
-        while ( (hotel.getClients().get(clientID) == null) && (counter < 4) )
+        do
         {
-            System.out.print("Błędny identyfikator, spróbuj ponownie: ");
-            clientID = scanner.nextLong();
+            if (scanner.hasNextLong())
+            {
+                clientID = scanner.nextLong();
+
+                if (hotel.getClients().get(clientID) != null)
+                {
+                    correctInput = true;
+                }
+                else
+                {
+                    System.out.print("Błędny identyfikator, spróbuj ponownie: ");
+                }
+            }
+            else
+            {
+                System.out.print("Błędny identyfikator, spróbuj ponownie: ");
+                scanner.next();
+            }
+
             ++counter;
         }
+        while(!correctInput && counter < 4);
 
         if (hotel.getClients().get(clientID) != null)
         {
