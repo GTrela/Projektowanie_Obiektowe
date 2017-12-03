@@ -1,5 +1,7 @@
 import java.time.LocalDate;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 
 class AdminPanelMenu extends BaseMenu
@@ -52,9 +54,133 @@ class AdminPanelMenu extends BaseMenu
         menuDescriptions.put(16, "Wyjście");
     }
 
-    public void findVacantRooms()
+    public BaseMenu findVacantRooms()
     {
+        Scanner scanner = new Scanner(System.in);
+        scanner.useDelimiter("\n");
+        String checkInDate = "";
+        String checkOutDate = "";
+        int nOfBeds = -1;
 
+        try
+        {
+            System.out.print("Podaj datę zameldowania w formacie dzień/miesiąc/rok: ");
+            boolean correctInput = false;
+
+            do
+            {
+                checkInDate = scanner.nextLine();
+
+                if (this.dateInput(checkInDate) != null)
+                {
+                    correctInput = true;
+                }
+                else
+                {
+                    System.out.print("Błędny format daty, spróbuj ponownie: ");
+                }
+            }
+            while(!correctInput);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+
+        try
+        {
+            System.out.print("Podaj datę wymeldowania w formacie dzień/miesiąc/rok: ");
+            boolean correctInput = false;
+
+            do
+            {
+                checkOutDate = scanner.nextLine();
+
+                if (this.dateInput(checkOutDate) != null)
+                {
+                    correctInput = true;
+                }
+                else
+                {
+                    System.out.print("Błędny format daty, spróbuj ponownie: ");
+                }
+            }
+            while(!correctInput);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+
+        System.out.print("Podaj ilość łóżek: ");
+        boolean correctInput = false;
+
+        do
+        {
+            if (scanner.hasNextInt())
+            {
+                nOfBeds = scanner.nextInt();
+
+                if (nOfBeds > 0)
+                {
+                    correctInput = true;
+                }
+                else
+                {
+                    System.out.print("Błędna ilość łóżek, spróbuj ponownie: ");
+                }
+            }
+            else
+            {
+                System.out.print("Błędna ilość łóżek, spróbuj ponownie: ");
+                scanner.next();
+            }
+        }
+        while(!correctInput);
+
+        Hotel hotel = Hotel.getInstance();
+        LocalDate checkIn = dateInput(checkInDate);
+        LocalDate checkOut = dateInput(checkOutDate);
+        List<Long> roomList;
+        Map<Long, Room> roomMap;
+
+        try
+        {
+            roomList = hotel.getVacantRooms(checkIn, checkOut);
+            roomMap = hotel.selectRooms(roomList, nOfBeds);
+        }
+        catch (NoVacantRooms e1)
+        {
+            System.out.println("Brak wolnych pokoi.");
+            System.out.printf("\nNaciśnij ENTER, aby powrócić do głównej strony panelu...");
+
+            scanner.next();
+
+            return new AdminPanelMenu();
+        }
+        catch (NotEnoughBeds e2)
+        {
+            System.out.println("Brak wystarczającej ilości łóżek.");
+            System.out.printf("\nNaciśnij ENTER, aby powrócić do głównej strony panelu...");
+
+            scanner.next();
+
+            return new AdminPanelMenu();
+        }
+
+        System.out.println();
+        System.out.printf("%-8s%-8s%-15s%-40s\n","Numer","Łóżka","Standard","Opis");
+
+        for (Room room : roomMap.values())
+        {
+            System.out.println(room);
+        }
+
+        System.out.printf("\nNaciśnij ENTER, aby powrócić do głównej strony panelu...");
+
+        scanner.next();
+
+        return new AdminPanelMenu();
     }
 
     public void showReservation()
@@ -123,7 +249,7 @@ class AdminPanelMenu extends BaseMenu
 
             do
             {
-                startDate = scanner.next();
+                startDate = scanner.nextLine();
 
                 if (this.dateInput(startDate) != null)
                 {
@@ -132,7 +258,6 @@ class AdminPanelMenu extends BaseMenu
                 else
                 {
                     System.out.print("Błędny format daty, spróbuj ponownie: ");
-                    scanner.next();
                 }
             }
             while(!correctInput);
@@ -149,7 +274,7 @@ class AdminPanelMenu extends BaseMenu
 
             do
             {
-                endDate = scanner.next();
+                endDate = scanner.nextLine();
 
                 if (this.dateInput(endDate) != null)
                 {
@@ -158,7 +283,6 @@ class AdminPanelMenu extends BaseMenu
                 else
                 {
                     System.out.print("Błędny format daty, spróbuj ponownie: ");
-                    scanner.next();
                 }
             }
             while(!correctInput);
