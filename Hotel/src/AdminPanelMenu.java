@@ -37,8 +37,8 @@ class AdminPanelMenu extends BaseMenu
         }
 
         menuDescriptions.put(1, "Wyszukaj wolne pokoje");
-        menuDescriptions.put(2, "Sprawdź rezerwację");
-        menuDescriptions.put(3, "Wyświetl rezerwacje");
+        menuDescriptions.put(2, "Wyświetl pojedynczą rezerwację");
+        menuDescriptions.put(3, "Wyświetl wszystkie rezerwacje");
         menuDescriptions.put(4, "Dodaj rezerwację");
         menuDescriptions.put(5, "Usuń rezerwację");
         menuDescriptions.put(6, "Wyświetl okresy specjalne");
@@ -236,11 +236,14 @@ class AdminPanelMenu extends BaseMenu
 
         for (Reservation reservation : hotel.getReservations().values())
         {
+            System.out.println("\n| Rezerwacja o ID: " + reservation.getId()
+                    + " (Klient: " + hotel.getClients().get(reservation.getClientId()).getName()
+                    + " " + hotel.getClients().get(reservation.getClientId()).getSurname() + ") |");
             System.out.print(reservation);
             System.out.println("----------------------------------------------------");
         }
 
-        System.out.printf("\nNaciśnij ENTER, aby powrócić do głównej strony panelu...");
+        System.out.printf("\nNaciśnij ENTER, aby powrócić do głównej strony panelu...\n");
 
         scanner.nextLine();
 

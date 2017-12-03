@@ -16,7 +16,7 @@ class ClientPanelMenu extends BaseMenu
         try
         {
             menuActions.put(1, ClientPanelMenu.class.getMethod("findVacantRooms"));
-            menuActions.put(2, ClientPanelMenu.class.getMethod("checkReservation"));
+            menuActions.put(2, ClientPanelMenu.class.getMethod("showReservations"));
             menuActions.put(3, ClientPanelMenu.class.getMethod("logout"));
             menuActions.put(4, ClientPanelMenu.class.getMethod("exit"));
         }
@@ -25,25 +25,26 @@ class ClientPanelMenu extends BaseMenu
             e.printStackTrace();
         }
 
-        menuDescriptions.put(1, "Wyszukaj puste pokoje");
-        menuDescriptions.put(2, "Sprawdź rezerwację");
+        menuDescriptions.put(1, "Wyszukaj wolne pokoje");
+        menuDescriptions.put(2, "Wyświetl swoje rezerwacje");
         menuDescriptions.put(3, "Wyloguj");
         menuDescriptions.put(4, "Wyjście");
     }
 
-    public void findVacantRooms()
+    public BaseMenu findVacantRooms()
     {
+        Hotel hotel = Hotel.getInstance();
         Scanner scanner = new Scanner(System.in);
         scanner.useDelimiter("\n");
         String checkInDate = "";
         String checkOutDate = "";
-        int numberOfBeds = -1;
-        Reservation reservation = null;
+        int nOfBeds = -1;
+        boolean correctInput = false;
 
         try
         {
-            System.out.print("Podaj datę zameldowania w formacie dzień/miesiąc/rok: ");
-            boolean correctInput = false;
+            System.out.print("\nPodaj datę zameldowania w formacie dzień/miesiąc/rok: ");
+            correctInput = false;
 
             do
             {
@@ -56,7 +57,6 @@ class ClientPanelMenu extends BaseMenu
                 else
                 {
                     System.out.print("Błędny format daty, spróbuj ponownie: ");
-                    scanner.next();
                 }
             }
             while(!correctInput);
@@ -69,7 +69,7 @@ class ClientPanelMenu extends BaseMenu
         try
         {
             System.out.print("Podaj datę wymeldowania w formacie dzień/miesiąc/rok: ");
-            boolean correctInput = false;
+            correctInput = false;
 
             do
             {
@@ -82,7 +82,6 @@ class ClientPanelMenu extends BaseMenu
                 else
                 {
                     System.out.print("Błędny format daty, spróbuj ponownie: ");
-                    scanner.next();
                 }
             }
             while(!correctInput);
@@ -92,70 +91,142 @@ class ClientPanelMenu extends BaseMenu
             e.printStackTrace();
         }
 
-        try
+        System.out.print("Podaj ilość łóżek: ");
+        correctInput = false;
+
+        do
         {
-            System.out.print("Podaj ilość łóżek: ");
-            boolean correctInput = false;
-
-            do
+            if (scanner.hasNextInt())
             {
-                if (scanner.hasNextInt())
-                {
-                    numberOfBeds = scanner.nextInt();
+                nOfBeds = scanner.nextInt();
 
-                    if (numberOfBeds > 0)
-                    {
-                        correctInput = true;
-                    }
-                    else
-                    {
-                        System.out.print("Błędna ilość łóżek. Spróbuj ponownie: ");
-                    }
+                if (nOfBeds > 0)
+                {
+                    correctInput = true;
                 }
                 else
                 {
-                    System.out.print("Błędna ilość łóżek. Spróbuj ponownie: ");
-                    scanner.next();
+                    System.out.print("Błędna ilość łóżek, spróbuj ponownie: ");
                 }
             }
-            while(!correctInput);
+            else
+            {
+                System.out.print("Błędna ilość łóżek, spróbuj ponownie: ");
+                scanner.next();
+            }
         }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-        }
+        while(!correctInput);
 
-        Hotel hotel = Hotel.getInstance();
         LocalDate checkIn = dateInput(checkInDate);
         LocalDate checkOut = dateInput(checkOutDate);
+        Reservation reservation;
 
         try
         {
-            reservation = hotel.checkReservation(currentUserID, checkIn, checkOut, numberOfBeds);
+            reservation = hotel.checkReservation(currentUserID, checkIn, checkOut, nOfBeds);
         }
-        catch (NotEnoughBeds e1)
+        catch (NoVacantRooms e1)
         {
-            System.out.println("Brak wystarczającej ilości łóżek.");
+            System.out.println("\nBrak wolnych pokoi.");
+            System.out.printf("\nNaciśnij ENTER, aby powrócić do głównej strony panelu...");
+
+            scanner.next();
+
+            return new ClientPanelMenu(currentUserID);
         }
-        catch (NoVacantRooms e2)
+        catch (NotEnoughBeds e2)
         {
-            System.out.println("Brak wystarczającej ilości pokoi");
+            System.out.println("\nBrak wystarczającej ilości łóżek.");
+            System.out.printf("\nNaciśnij ENTER, aby powrócić do głównej strony panelu...");
+
+            scanner.next();
+
+            return new ClientPanelMenu(currentUserID);
         }
 
-        if (reservation == null)
-        {
-            System.out.println("Nie odnaleziono pokoi odpowiadających podanym kryteriom.");
-        }
-
-        System.out.println("Proponowana rezerwacja: ");
+        System.out.println("\nProponowana rezerwacja: ");
         System.out.println(reservation);
 
-        //this.dateInput("2/10/2017");
+        System.out.printf("Dokonać rezerwacji [1] czy wrócić do głównej strony panelu [2]? ");
+
+        correctInput = false;
+        int option = 0;
+
+        do
+        {
+            if (scanner.hasNextInt())
+            {
+                option = scanner.nextInt();
+
+                if (option == 1 || option == 2)
+                {
+                    correctInput = true;
+                }
+                else
+                {
+                    System.out.print("Błędny numer opcji. Spróbuj ponownie: ");
+                }
+            }
+            else
+            {
+                System.out.print("Błędny numer opcji. Spróbuj ponownie: ");
+                scanner.next();
+            }
+        }
+        while(!correctInput);
+
+        if (option == 1)
+        {
+            hotel.addReservation(reservation);
+
+            System.out.println("\nRezerwacja o ID: " + reservation.getId() +
+                    " dla użytkownika o ID: " + currentUserID + " została dodana.");
+            System.out.printf("\nNaciśnij ENTER, aby powrócić do głównej strony panelu...");
+
+            scanner.next();
+
+            return new ClientPanelMenu(currentUserID);
+        }
+        else
+        {
+            System.out.printf("\nNaciśnij ENTER, aby powrócić do głównej strony panelu...");
+
+            scanner.next();
+
+            return new ClientPanelMenu(currentUserID);
+        }
     }
 
-    public void checkReservation()
+    public BaseMenu showReservations()
     {
+        Hotel hotel = Hotel.getInstance();
+        Scanner scanner = new Scanner(System.in);
+        scanner.useDelimiter("\n");
+        boolean noReservations = true;
 
+        for (Reservation reservation : hotel.getReservations().values())
+        {
+            if (reservation.getClientId() == currentUserID)
+            {
+                noReservations = false;
+                System.out.println("\n| Rezerwacja o ID: " + reservation.getId()
+                        + " (Klient: " + hotel.getClients().get(reservation.getClientId()).getName()
+                        + " " + hotel.getClients().get(reservation.getClientId()).getSurname() + ") |");
+                System.out.print(reservation);
+                System.out.println("----------------------------------------------------");
+            }
+        }
+
+        if (noReservations)
+        {
+            System.out.println("Brak rezerwacji.");
+        }
+
+        System.out.printf("\nNaciśnij ENTER, aby powrócić do głównej strony panelu...\n");
+
+        scanner.nextLine();
+
+        return new ClientPanelMenu(currentUserID);
     }
 
     public BaseMenu logout()
