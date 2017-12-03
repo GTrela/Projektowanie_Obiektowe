@@ -54,7 +54,6 @@ class Client
 	@Override
 	public String toString()
 	{
-		return String.format("%s %s, Id: %d, Liczba wizyt: %d",
-				name, surname, id, visitCount);
+		return String.format("%-5s%-15s%-15s%-10s",id,name,surname,visitCount);
 	}
 }

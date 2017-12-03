@@ -58,10 +58,6 @@ class Room implements Comparable<Room>
 	@Override
 	public String toString()
 	{
-		return "Pokoj " +
-				"nr = " + nr +
-				", ilosc lozek = " + nOfBeds +
-				", opis = '" + description + '\'' +
-				", comfort = " + comfort;
+		return String.format("%-8d%-8d%-15s%-40s",nr,nOfBeds,comfort,description);
 	}
 }

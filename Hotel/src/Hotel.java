@@ -714,8 +714,6 @@ class Hotel
 		}
 		else
 		{
-			StringBuilder builder = new StringBuilder();
-
 			try
 			{
 				f.getParentFile().mkdirs();

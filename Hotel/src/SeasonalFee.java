@@ -38,10 +38,10 @@ class SeasonalFee
     @Override
     public String toString()
     {
-        return "Sezon = "
-		        + eventName + '\'' +
-                ", data początkowa = " + startDate +
-                ", data końcowa = " + endDate +
-                ", oplata = " + fee;
+        return String.format("%-20s%-15s%-15s%-12s",
+                eventName,
+                startDate.getDayOfMonth() + "/" + startDate.getMonthValue() + "/" + startDate.getYear(),
+                endDate.getDayOfMonth() + "/" + endDate.getMonthValue() + "/" + endDate.getYear(),
+                fee + " PLN");
     }
 }
