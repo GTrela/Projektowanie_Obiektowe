@@ -14,11 +14,11 @@ class AdminPanelMenu extends BaseMenu
             menuActions.put(1, AdminPanelMenu.class.getMethod("findVacantRooms"));
             menuActions.put(2, AdminPanelMenu.class.getMethod("checkReservation"));
             menuActions.put(3, AdminPanelMenu.class.getMethod("addReservation"));
-            menuActions.put(4, AdminPanelMenu.class.getMethod("removeReservation"));
+            menuActions.put(4, AdminPanelMenu.class.getMethod("deleteReservation"));
             menuActions.put(5, AdminPanelMenu.class.getMethod("addRoom"));
-            menuActions.put(6, AdminPanelMenu.class.getMethod("removeRoom"));
+            menuActions.put(6, AdminPanelMenu.class.getMethod("deleteRoom"));
             menuActions.put(7, AdminPanelMenu.class.getMethod("addUser"));
-            menuActions.put(8, AdminPanelMenu.class.getMethod("removeUser"));
+            menuActions.put(8, AdminPanelMenu.class.getMethod("deleteUser"));
             menuActions.put(9, AdminPanelMenu.class.getMethod("logout"));
             menuActions.put(10, AdminPanelMenu.class.getMethod("exit"));
 
@@ -53,7 +53,7 @@ class AdminPanelMenu extends BaseMenu
 
     }
 
-    public void removeReservation()
+    public void deleteReservation()
     {
 
     }
@@ -150,9 +150,55 @@ class AdminPanelMenu extends BaseMenu
         return new AdminPanelMenu();
     }
 
-    public void removeRoom()
+    public BaseMenu deleteRoom()
     {
+        Hotel hotel = Hotel.getInstance();
+        Scanner scanner = new Scanner(System.in);
+        scanner.useDelimiter("\n");
 
+        System.out.print("\nPodaj numer: ");
+
+        boolean correctInput = false;
+        long roomNr = 0;
+
+        do
+        {
+            if (scanner.hasNextLong())
+            {
+                roomNr = scanner.nextLong();
+
+                if (hotel.getRooms().get(roomNr) != null)
+                {
+                    correctInput = true;
+                }
+                else
+                {
+                    System.out.print("Pokój o takim numerze nie istnieje, spróbuj ponownie: ");
+                }
+            }
+            else
+            {
+                System.out.print("Pokój o takim numerze nie istnieje, spróbuj ponownie: ");
+                scanner.next();
+            }
+        }
+        while(!correctInput);
+
+        try
+        {
+            hotel.deleteRoom(roomNr);
+            System.out.println("\nPokój o numerze " + roomNr + " został usunięty.");
+        }
+        catch (RoomInUse e)
+        {
+            System.out.println("Pokój nie może zostać usunięty - jest zarezerwowany.");
+        }
+
+        System.out.printf("\nNaciśnij ENTER, aby powrócić do głównej strony panelu...");
+
+        scanner.next();
+
+        return new AdminPanelMenu();
     }
 
     public BaseMenu addUser()
@@ -177,9 +223,48 @@ class AdminPanelMenu extends BaseMenu
         return new AdminPanelMenu();
     }
 
-    public void removeUser()
+    public BaseMenu deleteUser()
     {
+        Hotel hotel = Hotel.getInstance();
+        Scanner scanner = new Scanner(System.in);
+        scanner.useDelimiter("\n");
 
+        System.out.print("\nPodaj identyfikator: ");
+
+        boolean correctInput = false;
+        long clientID = 0;
+
+        do
+        {
+            if (scanner.hasNextLong())
+            {
+                clientID = scanner.nextLong();
+
+                if (hotel.getClients().get(clientID) != null)
+                {
+                    correctInput = true;
+                }
+                else
+                {
+                    System.out.print("Klient o takim ID nie istnieje, spróbuj ponownie: ");
+                }
+            }
+            else
+            {
+                System.out.print("Klient o takim ID nie istnieje, spróbuj ponownie: ");
+                scanner.next();
+            }
+        }
+        while(!correctInput);
+
+        hotel.deleteClient(clientID);
+
+        System.out.println("\nUżytkownik o ID " + clientID + " został usunięty");
+        System.out.printf("\nNaciśnij ENTER, aby powrócić do głównej strony panelu...");
+
+        scanner.next();
+
+        return new AdminPanelMenu();
     }
 
     public BaseMenu logout()

@@ -271,7 +271,7 @@ class Hotel
 	{
 		for (Reservation reservation : Reservations.values())
 		{
-			if (reservation.roomsList.contains(number))
+			if (reservation.roomsList.contains(number) && (LocalDate.now().until(reservation.getCheckInDate()).getDays() > 0))
 			{
 				throw new RoomInUse(number);
 			}
