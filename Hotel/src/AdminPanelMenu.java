@@ -36,10 +36,10 @@ class AdminPanelMenu extends BaseMenu
             e.printStackTrace();
         }
 
-        menuDescriptions.put(1, "Wyszukaj wolne pokoje"); //
+        menuDescriptions.put(1, "Wyszukaj wolne pokoje");
         menuDescriptions.put(2, "Sprawdź rezerwację"); //
         menuDescriptions.put(3, "Wyświetl rezerwacje"); //
-        menuDescriptions.put(4, "Dodaj rezerwację"); //
+        menuDescriptions.put(4, "Dodaj rezerwację");
         menuDescriptions.put(5, "Usuń rezerwację"); //
         menuDescriptions.put(6, "Wyświetl okresy specjalne");
         menuDescriptions.put(7, "Dodaj okres specjalny");
@@ -193,9 +193,197 @@ class AdminPanelMenu extends BaseMenu
 
     }
 
-    public void addReservation()
+    public BaseMenu addReservation()
     {
+        Hotel hotel = Hotel.getInstance();
+        Scanner scanner = new Scanner(System.in);
+        scanner.useDelimiter("\n");
+        String checkInDate = "";
+        String checkOutDate = "";
+        int nOfBeds = -1;
+        long clientID = 0;
 
+        System.out.print("\nPodaj identyfikator klienta: ");
+
+        boolean correctInput = false;
+
+        do
+        {
+            if (scanner.hasNextLong())
+            {
+                clientID = scanner.nextLong();
+
+                if (hotel.getClients().get(clientID) != null)
+                {
+                    correctInput = true;
+                }
+                else
+                {
+                    System.out.print("Klient o takim ID nie istnieje, spróbuj ponownie: ");
+                }
+            }
+            else
+            {
+                System.out.print("Klient o takim ID nie istnieje, spróbuj ponownie: ");
+                scanner.next();
+            }
+        }
+        while(!correctInput);
+
+        try
+        {
+            System.out.print("Podaj datę zameldowania w formacie dzień/miesiąc/rok: ");
+            correctInput = false;
+
+            do
+            {
+                checkInDate = scanner.next();
+
+                if (this.dateInput(checkInDate) != null)
+                {
+                    correctInput = true;
+                }
+                else
+                {
+                    System.out.print("Błędny format daty, spróbuj ponownie: ");
+                }
+            }
+            while(!correctInput);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+
+        try
+        {
+            System.out.print("Podaj datę wymeldowania w formacie dzień/miesiąc/rok: ");
+            correctInput = false;
+
+            do
+            {
+                checkOutDate = scanner.next();
+
+                if (this.dateInput(checkOutDate) != null)
+                {
+                    correctInput = true;
+                }
+                else
+                {
+                    System.out.print("Błędny format daty, spróbuj ponownie: ");
+                }
+            }
+            while(!correctInput);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+
+        System.out.print("Podaj ilość łóżek: ");
+        correctInput = false;
+
+        do
+        {
+            if (scanner.hasNextInt())
+            {
+                nOfBeds = scanner.nextInt();
+
+                if (nOfBeds > 0)
+                {
+                    correctInput = true;
+                }
+                else
+                {
+                    System.out.print("Błędna ilość łóżek, spróbuj ponownie: ");
+                }
+            }
+            else
+            {
+                System.out.print("Błędna ilość łóżek, spróbuj ponownie: ");
+                scanner.next();
+            }
+        }
+        while(!correctInput);
+
+        LocalDate checkIn = dateInput(checkInDate);
+        LocalDate checkOut = dateInput(checkOutDate);
+        Reservation reservation;
+
+        try
+        {
+            reservation = hotel.checkReservation(clientID, checkIn, checkOut, nOfBeds);
+        }
+        catch (NoVacantRooms e1)
+        {
+            System.out.println("Brak wolnych pokoi.");
+            System.out.printf("\nNaciśnij ENTER, aby powrócić do głównej strony panelu...");
+
+            scanner.next();
+
+            return new AdminPanelMenu();
+        }
+        catch (NotEnoughBeds e2)
+        {
+            System.out.println("Brak wystarczającej ilości łóżek.");
+            System.out.printf("\nNaciśnij ENTER, aby powrócić do głównej strony panelu...");
+
+            scanner.next();
+
+            return new AdminPanelMenu();
+        }
+
+        System.out.println("\nProponowana rezerwacja: ");
+        System.out.println(reservation);
+
+        System.out.printf("Dokonać rezerwacji [1] czy wrócić do głównej strony panelu [2]? ");
+
+        correctInput = false;
+        int option = 0;
+
+        do
+        {
+            if (scanner.hasNextInt())
+            {
+                option = scanner.nextInt();
+
+                if (option == 1 || option == 2)
+                {
+                    correctInput = true;
+                }
+                else
+                {
+                    System.out.print("Błędny numer opcji. Spróbuj ponownie: ");
+                }
+            }
+            else
+            {
+                System.out.print("Błędny numer opcji. Spróbuj ponownie: ");
+                scanner.next();
+            }
+        }
+        while(!correctInput);
+
+        if (option == 1)
+        {
+            hotel.addReservation(reservation);
+
+            System.out.println("\nRezerwacja o ID: " + reservation.getId() +
+                    " dla użytkownika o ID: " + clientID + " została dodana.");
+            System.out.printf("\nNaciśnij ENTER, aby powrócić do głównej strony panelu...");
+
+            scanner.next();
+
+            return new AdminPanelMenu();
+        }
+        else
+        {
+            System.out.printf("\nNaciśnij ENTER, aby powrócić do głównej strony panelu...");
+
+            scanner.next();
+
+            return new AdminPanelMenu();
+        }
     }
 
     public void deleteReservation()

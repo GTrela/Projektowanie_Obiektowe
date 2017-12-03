@@ -55,21 +55,23 @@ class Reservation
 	{
 		StringBuilder builder = new StringBuilder();
 
-		builder.append(String.format("\nRezerwacja o id = %d, na klienta o id = %d. ",id,clientId));
-		builder.append("Data zameldowania: ");
+		builder.append("\nData zameldowania: ");
 		builder.append(checkInDate);
-		builder.append(" Data wymeldowania: ");
+		builder.append("\nData wymeldowania: ");
 		builder.append(checkOutDate);
-		builder.append("\nZarezerwowane pokoje:\n");
+		builder.append("\n\nZarezerwowane pokoje:\n");
 
         Hotel hotel = Hotel.getInstance();
 
-		for (int i = 0; i < roomsList.size(); i++)
-		{
-			builder.append("-\t"+ hotel.getRooms().get(roomsList.get(i)).toString() + "\n");
-		}
+        builder.append("\n");
+        builder.append("Numer   Łóżka   Standard       Opis\n");
 
-		builder.append(String.format("Kwota do zapłaty %.2f zł\n",totalPrice));
+        for (long roomNr : roomsList)
+        {
+            builder.append(hotel.getRooms().get(roomNr).toString() + "\n");
+        }
+
+		builder.append(String.format("\nKwota do zapłaty %.2f zł\n",totalPrice));
 
 		return builder.toString();
 	}
