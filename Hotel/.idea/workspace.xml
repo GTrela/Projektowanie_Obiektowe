@@ -7,12 +7,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="e9f9e8ba-7d33-4fd2-801c-c0f3886ff376" name="Default" comment="When delete user delete all his reservations">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/.idea/artifacts/Hotel_jar.xml" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/META-INF/MANIFEST.MF" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/artifacts/Hotel_jar/Hotel.jar" afterPath="$PROJECT_DIR$/out/artifacts/Hotel_jar/Hotel.jar" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/vcs.xml" afterPath="$PROJECT_DIR$/.idea/vcs.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Hotel.iml" afterPath="$PROJECT_DIR$/Hotel.iml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/META-INF/MANIFEST.MF" afterPath="$PROJECT_DIR$/src/META-INF/MANIFEST.MF" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -358,7 +355,7 @@
       <workItem from="1511055182234" duration="2080000" />
       <workItem from="1511985478171" duration="7652000" />
       <workItem from="1512383029819" duration="1866000" />
-      <workItem from="1512409339499" duration="435000" />
+      <workItem from="1512409339499" duration="557000" />
     </task>
     <task id="LOCAL-00001" summary="add Exeptions">
       <created>1511993531921</created>
@@ -381,11 +378,18 @@
       <option name="project" value="LOCAL" />
       <updated>1511993904313</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="update IntelliJ project settings">
+      <created>1512409893808</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1512409893808</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="18478000" />
+    <option name="totallyTimeSpent" value="18600000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="2271" y="141" width="1857" height="1092" extended-state="6" />
@@ -461,7 +465,8 @@
     <MESSAGE value="add Exeptions" />
     <MESSAGE value="add toString() methods" />
     <MESSAGE value="When delete user delete all his reservations" />
-    <option name="LAST_COMMIT_MESSAGE" value="When delete user delete all his reservations" />
+    <MESSAGE value="update IntelliJ project settings" />
+    <option name="LAST_COMMIT_MESSAGE" value="update IntelliJ project settings" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
