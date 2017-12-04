@@ -659,6 +659,13 @@ class Hotel
 
 	public Reservation checkReservation(long clientId, LocalDate checkInDate, LocalDate checkOutDate, long nOfBeds) throws NotEnoughBeds, NoVacantRooms
 	{
+		if (checkInDate.isAfter(checkOutDate))
+		{
+			LocalDate temp = checkInDate;
+			checkInDate = checkOutDate;
+			checkOutDate = temp;
+		}
+
 		List<Long> roomList = getVacantRooms(checkInDate, checkOutDate);
 		Map<Long, Room> roomMap = selectRooms(roomList, nOfBeds);
 		List<Long> roomsIds = new ArrayList<>(roomMap.keySet());
