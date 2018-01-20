@@ -1,12 +1,25 @@
+import org.bytedeco.javacpp.Loader;
+import org.bytedeco.javacpp.helper.opencv_objdetect;
+import org.bytedeco.javacpp.indexer.UByteRawIndexer;
+import org.bytedeco.javacpp.opencv_core;
+import org.bytedeco.javacv.CanvasFrame;
+import org.bytedeco.javacv.OpenCVFrameConverter;
+
 import javax.imageio.ImageIO;
+import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferByte;
 import java.awt.image.Raster;
 import java.awt.image.WritableRaster;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.bytedeco.javacpp.opencv_core.CV_8UC;
+import static org.bytedeco.javacpp.opencv_core.CV_8UC3;
+import static org.bytedeco.javacpp.opencv_imgcodecs.imread;
 
 public class ShapeRecognition
 {
@@ -233,6 +246,43 @@ public class ShapeRecognition
 		return new Point(topRight.x, bottomLeft.y);
 	}
 
+	public opencv_core.Mat bufferedImageToMat(BufferedImage bi)
+	{
+		opencv_core.Mat mat = new opencv_core.Mat(bi.getHeight(), bi.getWidth(), CV_8UC(3));
+
+		int r, g, b;
+		try (UByteRawIndexer indexer = mat.createIndexer()) {
+			for (int y = 0; y < bi.getHeight(); y++) {
+				for (int x = 0; x < bi.getWidth(); x++) {
+					int rgb = bi.getRGB(x, y);
+
+					r = (byte) ((rgb >> 0) & 0xFF);
+					g = (byte) ((rgb >> 8) & 0xFF);
+					b = (byte) ((rgb >> 16) & 0xFF);
+
+					indexer.put(y, x, 0, r);
+					indexer.put(y, x, 1, g);
+					indexer.put(y, x, 2, b);
+				}
+			}
+			indexer.release();
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+
+		return mat;
+	}
+
+	public static void show(opencv_core.Mat mat, String title)
+	{
+		OpenCVFrameConverter.ToMat converter = new OpenCVFrameConverter.ToMat();
+		CanvasFrame canvas = new CanvasFrame(title, 1);
+		canvas.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		canvas.showImage(converter.convert(mat));
+	}
+
 	public static void main(String[] args)
 	{
 		if (args.length < 1)
@@ -268,6 +318,17 @@ public class ShapeRecognition
 				}
 
 				printRasterImage(wr);
+
+				// OpenCV
+				// Preload the opencv_objdetect module to work around a known bug.
+				Loader.load(opencv_objdetect.class);
+
+				BufferedImage ellipsesImage = new BufferedImage(wr.getWidth(), wr.getHeight(), BufferedImage.TYPE_BYTE_BINARY);
+				ellipsesImage.setData(wr);
+
+				opencv_core.Mat src = sr.bufferedImageToMat(ellipsesImage);
+
+				show(src, "Step 1");
 			}
 
 			catch (IOException e)
