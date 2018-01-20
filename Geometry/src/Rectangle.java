@@ -4,7 +4,7 @@ import java.awt.*;
 
 public class Rectangle
 {
-    Point TopLeft;
+	Point TopLeft;
     Point TopRight;
     Point BottomLeft;
     Point BottomRight;
@@ -30,6 +30,26 @@ public class Rectangle
 	    this.BottomLeft.y += vector.y;
 	    this.BottomRight.y += vector.y;
     }
+
+	public Point getTopLeft()
+	{
+		return TopLeft;
+	}
+
+	public Point getTopRight()
+	{
+		return TopRight;
+	}
+
+	public Point getBottomLeft()
+	{
+		return BottomLeft;
+	}
+
+	public Point getBottomRight()
+	{
+		return BottomRight;
+	}
 
     public List<Point> getPoints()
     {
