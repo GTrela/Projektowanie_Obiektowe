@@ -17,6 +17,20 @@ public class Rectangle
         this.BottomRight = BottomRight;
     }
 
+    public void translateByVector (Point vector)
+    {
+
+	    this.TopLeft.x += vector.x;
+	    this.TopRight.x += vector.x;
+	    this.BottomLeft.x += vector.x;
+	    this.BottomRight.x += vector.x;
+
+	    this.TopLeft.y += vector.y;
+	    this.TopRight.y += vector.y;
+	    this.BottomLeft.y += vector.y;
+	    this.BottomRight.y += vector.y;
+    }
+
     public List<Point> getPoints()
     {
         List<Point> rectanglePoints = new ArrayList<>();
