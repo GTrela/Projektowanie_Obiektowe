@@ -4,11 +4,11 @@ import java.awt.image.BufferedImage;
 import java.awt.image.Raster;
 import java.io.File;
 import java.io.IOException;
-
-import static java.awt.image.BufferedImage.TYPE_BYTE_BINARY;
+import java.util.ArrayList;
 
 public class Main
 {
+	static int count = 0;
 
 	public static Raster loadImageRaster(String file_path) throws IOException
 	{
@@ -44,39 +44,64 @@ public class Main
 		}
 	}
 
-	public static boolean detectRectangle (Raster imageRaster, int tolerance, int startX, int startY)
+	public static boolean detectRectangle(Raster imageRaster, int tolerance, int startX, int startY, ArrayList<Point> skipPoints)
 	{
-		Point TopLeft,BottomLeft,BottomRight,TopRight;
+		Point TopLeft, BottomRight;
+		ArrayList<Point> BottomLeft, TopRight;
 
 		//detect first top left Rectangle corner
-		TopLeft = detectTopLeftRectCorner(imageRaster,tolerance,startX,startY);
+		TopLeft = detectTopLeftRectCorner(imageRaster, tolerance, startX, startY, skipPoints);
+
 
 		//detect rest of corners base on found top left corner
 		if (TopLeft != null)
 		{
-			TopRight = detectTopRightRectCorner(imageRaster,tolerance,TopLeft.x, TopLeft.y);
+			TopRight = detectTopRightRectCorner(imageRaster, tolerance, TopLeft.x, TopLeft.y);
+
 			BottomLeft = detectBottomLeftRectCorner(imageRaster, tolerance, TopLeft.x, TopLeft.y);
 
-			if (TopRight != null || BottomLeft != null)
+
+			if (TopRight.size() > 0 || BottomLeft.size() > 0)
 			{
-				BottomRight = detectBottomRightRectCorner(imageRaster,tolerance,BottomLeft.x,BottomLeft.y);
-				if (BottomRight != null)
+				for (int bottomLeftIndex = 0; bottomLeftIndex < BottomLeft.size(); bottomLeftIndex++)
 				{
-					System.out.printf("Found Rectangle at:\n%s\n%s\n%s\n%s",
-							TopLeft.toString(), TopRight.toString() ,BottomLeft.toString(),BottomRight.toString());
+					for (int topRightIndex = 0; topRightIndex < TopRight.size(); topRightIndex++)
+					{
+						// check if found bottomRight corner
+						BottomRight = checkBottomRightPoint(imageRaster, BottomLeft.get(bottomLeftIndex), TopRight.get(topRightIndex));
+
+						//if found return rectangle
+						if (BottomRight != null)
+						{
+							count++;
+							System.out.printf("Found Rectangle at:\n%s\n%s\n%s\n%s\n",
+									TopLeft.toString(), TopRight.get(topRightIndex), BottomLeft.get(bottomLeftIndex), BottomRight.toString());
+						}
+					}
 				}
+				return true;
 			}
 		}
+
 		return false;
 	}
 
-	public static Point detectTopLeftRectCorner(Raster imageRaster, int tolerance, int startX, int startY)
+	public static Point detectTopLeftRectCorner(Raster imageRaster, int tolerance, int startX, int startY, ArrayList<Point> skipPoints)
 	{
 		for (int y = startY; y < imageRaster.getHeight(); y++)
 		{
 			for (int x = startX; x < imageRaster.getWidth(); x++)
 			{
-				// search for top left rectangle corner base on minimal lenght
+				// skip earlier detected Top Left Rectangle Corner Points
+				for (int i = 0; i < skipPoints.size(); i++)
+				{
+					if (x == skipPoints.get(i).x && y == skipPoints.get(i).y)
+					{
+						x++;
+					}
+				}
+
+				// search for top left rectangle corner base on minimal length
 				if (x + tolerance < imageRaster.getWidth() && y + tolerance < imageRaster.getHeight()
 						&& imageRaster.getSample(x, y, 0) == 0)
 				{
@@ -93,8 +118,12 @@ public class Main
 
 					if (detectFlag)
 					{
-						System.out.println("Found Top Left Rectangle Corner at x = " + x + ", y = " + y);
-						return new Point(x,y);
+						//System.out.println("Found Top Left Rectangle Corner at x = " + x + ", y = " + y);
+						// create and add to detected Top Left Corner Points
+						Point detectedTopLeftCorner = new Point(x, y);
+						skipPoints.add(detectedTopLeftCorner);
+
+						return detectedTopLeftCorner;
 					}
 				}
 			}
@@ -102,17 +131,21 @@ public class Main
 		return null;
 	}
 
-	public static Point detectTopRightRectCorner(Raster imageRaster, int tolerance, int TopLeftX, int TopLeftY)
+	public static ArrayList<Point> detectTopRightRectCorner(Raster imageRaster, int tolerance, int TopLeftX, int TopLeftY)
 	{
-		for (TopLeftX = TopLeftX + 1; TopLeftX < imageRaster.getWidth(); TopLeftX++)
+		ArrayList<Point> detectedTopRightPoints = new ArrayList<>();
+
+		for (int x = TopLeftX + 1; x < imageRaster.getWidth(); x++)
 		{
-			if (imageRaster.getSample(TopLeftX, TopLeftY, 0) == 0)
+			// check if we have straight line of points
+			if (imageRaster.getSample(x, TopLeftY, 0) == 0)
 			{
 				boolean detectFlag = true;
 
+				//check if we have detect corner
 				for (int i = 1; i <= tolerance; i++)
 				{
-					if ((imageRaster.getSample(TopLeftX, TopLeftY + i, 0) == 1))
+					if ((imageRaster.getSample(x, TopLeftY + i, 0) == 1))
 					{
 						detectFlag = false;
 					}
@@ -120,68 +153,79 @@ public class Main
 
 				if (detectFlag)
 				{
-					System.out.println("Found Top Right Rectangle Corner at x = " + TopLeftX + ", y = " + TopLeftY);
-					return new Point(TopLeftX,TopLeftY);
+					//System.out.println("Found Top Right Rectangle Corner at x = " + x + ", y = " + TopLeftY);
+					Point detectedTopRightPoint = new Point(x, TopLeftY);
+					detectedTopRightPoints.add(detectedTopRightPoint);
 				}
 			}
+			else
+			{
+				break;
+			}
 		}
-		return null;
+
+		return detectedTopRightPoints;
 	}
 
-	public static Point detectBottomLeftRectCorner(Raster imageRaster, int tolerance, int TopLeftX, int TopLeftY)
+	public static ArrayList<Point> detectBottomLeftRectCorner(Raster imageRaster, int tolerance, int TopLeftX, int TopLeftY)
 	{
+		ArrayList<Point> detectedBottomLeftPoints = new ArrayList<>();
 
 		//detect bottom left rectangle corner base on founded top left corner
-		for (TopLeftY = TopLeftY + 1; TopLeftY < imageRaster.getHeight(); TopLeftY++)
+		for (int y = TopLeftY + 1; y < imageRaster.getHeight(); y++)
 		{
-			if (imageRaster.getSample(TopLeftX, TopLeftY, 0) == 0)
+			if (imageRaster.getSample(TopLeftX, y, 0) == 0)
 			{
 				boolean detectFlag = true;
 
 				for (int i = 1; i <= tolerance; i++)
 				{
-					if ((imageRaster.getSample(TopLeftX + i, TopLeftY, 0) == 1))
-					{
+					if ((imageRaster.getSample(TopLeftX + i, y, 0) == 1))
 						detectFlag = false;
-					}
 				}
 
 				if (detectFlag)
 				{
-					System.out.println("Found Bottom Left Rectangle Corner at x = " + TopLeftX + ", y = " + TopLeftY);
-					return new Point(TopLeftX,TopLeftY);
+					//System.out.println("Found Bottom Left Rectangle Corner at x = " + TopLeftX + ", y = " + y);
+					Point detectedBottomLeftPoint = new Point(TopLeftX, y);
+					detectedBottomLeftPoints.add(detectedBottomLeftPoint);
 				}
 			}
+			else
+			{
+				break;
+			}
 		}
-
-		return null;
+		return detectedBottomLeftPoints;
 	}
 
-	public static Point detectBottomRightRectCorner(Raster imageRaster, int tolerance, int BottomLeftX, int BottomLeftY)
+	public static Point checkBottomRightPoint(Raster imageRaster, Point bottomLeft, Point topRight)
 	{
-		for (BottomLeftX = BottomLeftX + 1; BottomLeftX < imageRaster.getWidth(); BottomLeftX++)
+		// check if this point exist's
+		if ((imageRaster.getSample(topRight.x, bottomLeft.y, 0) != 0))
 		{
-			if (imageRaster.getSample(BottomLeftX, BottomLeftY, 0) == 0)
+			return null;
+		}
+
+		//check if there is bottom edge
+		for (int x = bottomLeft.x + 1; x < topRight.x; x++)
+		{
+			if (imageRaster.getSample(x, bottomLeft.y, 0) != 0)
 			{
-				boolean detectFlag = true;
-
-				for (int i = 1; i <= tolerance; i++)
-				{
-					if ((imageRaster.getSample(BottomLeftX, BottomLeftY - i, 0) == 1))
-					{
-						detectFlag = false;
-					}
-				}
-
-				if (detectFlag)
-				{
-					System.out.println("Found Bottom Right Rectangle Corner at x = " + BottomLeftX + ", y = " + BottomLeftY);
-					return new Point(BottomLeftX,BottomLeftY);
-				}
+				return null;
 			}
 		}
 
-		return null;
+		//check if there is right edge
+		for (int y = topRight.y + 1; y < bottomLeft.y; y++)
+		{
+			if (imageRaster.getSample(topRight.x, y, 0) != 0)
+			{
+				return null;
+			}
+		}
+
+		return new Point(topRight.x, bottomLeft.y);
 	}
 
 	public static void main(String[] args)
@@ -190,15 +234,22 @@ public class Main
 		{
 			System.out.println("Add file path as argument");
 			System.exit(0);
-		} else
+		}
+		else
 		{
 			String imageFilePath = args[0];
 			try
 			{
 				Raster imageRaster = loadImageRaster(imageFilePath);
 				printRasterImage(imageRaster);
-				//detect first Rectangle
-				detectRectangle(imageRaster, 4,imageRaster.getMinX(),imageRaster.getMinY());
+
+				ArrayList<Point> testPoints = new ArrayList<>();
+
+				//detect every Rectangle
+				while (detectRectangle(imageRaster, 4, imageRaster.getMinX(), imageRaster.getMinY(), testPoints))
+				{
+				}
+				System.out.println("Rectangles found = " + count);
 			}
 
 			catch (IOException e)
