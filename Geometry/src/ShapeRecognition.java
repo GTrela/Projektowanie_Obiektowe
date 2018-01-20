@@ -2,13 +2,15 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.Raster;
+import java.awt.image.WritableRaster;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
-public class Main
+public class ShapeRecognition
 {
-	static int count = 0;
+	List<Rectangle> detectedRectangles = new ArrayList<>();
 
 	public static Raster loadImageRaster(String file_path) throws IOException
 	{
@@ -44,7 +46,7 @@ public class Main
 		}
 	}
 
-	public static boolean detectRectangle(Raster imageRaster, int tolerance, int startX, int startY, ArrayList<Point> skipPoints)
+	public boolean detectRectangle(Raster imageRaster, int tolerance, int startX, int startY, ArrayList<Point> skipPoints)
 	{
 		Point TopLeft, BottomRight;
 		ArrayList<Point> BottomLeft, TopRight;
@@ -52,14 +54,11 @@ public class Main
 		//detect first top left Rectangle corner
 		TopLeft = detectTopLeftRectCorner(imageRaster, tolerance, startX, startY, skipPoints);
 
-
 		//detect rest of corners base on found top left corner
 		if (TopLeft != null)
 		{
 			TopRight = detectTopRightRectCorner(imageRaster, tolerance, TopLeft.x, TopLeft.y);
-
 			BottomLeft = detectBottomLeftRectCorner(imageRaster, tolerance, TopLeft.x, TopLeft.y);
-
 
 			if (TopRight.size() > 0 || BottomLeft.size() > 0)
 			{
@@ -73,9 +72,7 @@ public class Main
 						//if found return rectangle
 						if (BottomRight != null)
 						{
-							count++;
-							System.out.printf("Found Rectangle at:\n%s\n%s\n%s\n%s\n",
-									TopLeft.toString(), TopRight.get(topRightIndex), BottomLeft.get(bottomLeftIndex), BottomRight.toString());
+							detectedRectangles.add(new Rectangle(TopLeft, TopRight.get(topRightIndex), BottomLeft.get(bottomLeftIndex), BottomRight));
 						}
 					}
 				}
@@ -118,7 +115,6 @@ public class Main
 
 					if (detectFlag)
 					{
-						//System.out.println("Found Top Left Rectangle Corner at x = " + x + ", y = " + y);
 						// create and add to detected Top Left Corner Points
 						Point detectedTopLeftCorner = new Point(x, y);
 						skipPoints.add(detectedTopLeftCorner);
@@ -153,7 +149,6 @@ public class Main
 
 				if (detectFlag)
 				{
-					//System.out.println("Found Top Right Rectangle Corner at x = " + x + ", y = " + TopLeftY);
 					Point detectedTopRightPoint = new Point(x, TopLeftY);
 					detectedTopRightPoints.add(detectedTopRightPoint);
 				}
@@ -186,7 +181,6 @@ public class Main
 
 				if (detectFlag)
 				{
-					//System.out.println("Found Bottom Left Rectangle Corner at x = " + TopLeftX + ", y = " + y);
 					Point detectedBottomLeftPoint = new Point(TopLeftX, y);
 					detectedBottomLeftPoints.add(detectedBottomLeftPoint);
 				}
@@ -240,16 +234,31 @@ public class Main
 			String imageFilePath = args[0];
 			try
 			{
+				ShapeRecognition sr = new ShapeRecognition();
 				Raster imageRaster = loadImageRaster(imageFilePath);
 				printRasterImage(imageRaster);
 
 				ArrayList<Point> testPoints = new ArrayList<>();
 
 				//detect every Rectangle
-				while (detectRectangle(imageRaster, 4, imageRaster.getMinX(), imageRaster.getMinY(), testPoints))
+				while (sr.detectRectangle(imageRaster, 4, imageRaster.getMinX(), imageRaster.getMinY(), testPoints))
 				{
 				}
-				System.out.println("Rectangles found = " + count);
+
+				WritableRaster wr = Raster.createWritableRaster(imageRaster.getSampleModel(), imageRaster.getDataBuffer(), null);
+
+				System.out.println("\n\n");
+
+				// delete detected rectangles from the Raster
+				for (Rectangle rect : sr.detectedRectangles)
+				{
+					for (Point pt : rect.getPoints())
+					{
+						wr.setSample(pt.x, pt.y, 0, 1);
+					}
+				}
+
+				printRasterImage(wr);
 			}
 
 			catch (IOException e)
