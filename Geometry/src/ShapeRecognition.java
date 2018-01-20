@@ -51,16 +51,18 @@ public class ShapeRecognition
 		Point TopLeft, BottomRight;
 		ArrayList<Point> BottomLeft, TopRight;
 
+		boolean detectFlag = false;
+
 		//detect first top left Rectangle corner
 		TopLeft = detectTopLeftRectCorner(imageRaster, tolerance, startX, startY, skipPoints);
 
-		//detect rest of corners base on found top left corner
-		if (TopLeft != null)
+		//while there is unchecked top left corner search for rectangles
+		while (TopLeft != null)
 		{
 			TopRight = detectTopRightRectCorner(imageRaster, tolerance, TopLeft.x, TopLeft.y);
 			BottomLeft = detectBottomLeftRectCorner(imageRaster, tolerance, TopLeft.x, TopLeft.y);
 
-			if (TopRight.size() > 0 || BottomLeft.size() > 0)
+			if (TopRight.size() > 0 && BottomLeft.size() > 0)
 			{
 				for (int bottomLeftIndex = 0; bottomLeftIndex < BottomLeft.size(); bottomLeftIndex++)
 				{
@@ -73,14 +75,23 @@ public class ShapeRecognition
 						if (BottomRight != null)
 						{
 							detectedRectangles.add(new Rectangle(TopLeft, TopRight.get(topRightIndex), BottomLeft.get(bottomLeftIndex), BottomRight));
+							detectFlag = true;
 						}
 					}
 				}
-				return true;
 			}
+
+			TopLeft = detectTopLeftRectCorner(imageRaster, tolerance, startX, startY, skipPoints);
 		}
 
-		return false;
+		if (detectFlag)
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
 	}
 
 	public static Point detectTopLeftRectCorner(Raster imageRaster, int tolerance, int startX, int startY, ArrayList<Point> skipPoints)
@@ -241,9 +252,7 @@ public class ShapeRecognition
 				ArrayList<Point> testPoints = new ArrayList<>();
 
 				//detect every Rectangle
-				while (sr.detectRectangle(imageRaster, 4, imageRaster.getMinX(), imageRaster.getMinY(), testPoints))
-				{
-				}
+				sr.detectRectangle(imageRaster, 4, imageRaster.getMinX(), imageRaster.getMinY(), testPoints);
 
 				WritableRaster wr = Raster.createWritableRaster(imageRaster.getSampleModel(), imageRaster.getDataBuffer(), null);
 
