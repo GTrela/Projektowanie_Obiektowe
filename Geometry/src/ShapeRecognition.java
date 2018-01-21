@@ -71,7 +71,11 @@ public class ShapeRecognition
 				//Point p = er.detectTopEdgeLeftPoint(imageRaster, imageRaster.getMinX()+2, imageRaster.getMinY(), testPoints);
 				//ArrayList<Point> points = er.detectTopEdgeRightPoints(imageRaster, p.x, p.y);
 
-				ArrayList<EllipseVerticalEdgePair> test = er.findVerticalEdgePairs(imageRaster, imageRaster.getMinX(), imageRaster.getMinY(), testPoints);
+				//Point p = er.detectLeftEdgeTopPoint(imageRaster, imageRaster.getMinX(), imageRaster.getMinY()+2, testPoints);
+				//ArrayList<Point> points = er.detectLeftEdgeBottomPoints(imageRaster, p.x, p.y);
+				//ArrayList<EllipseVerticalEdgePair> test = er.findVerticalEdgePairs(imageRaster, imageRaster.getMinX(), imageRaster.getMinY(), testPoints);
+				ArrayList<EllipseHorizontalEdgePair> test = er.findHortizontalEdgePairs(imageRaster, imageRaster.getMinX(), imageRaster.getHeight(), testPoints);
+				System.out.println(test);
 			}
 
 			catch (IOException e)
