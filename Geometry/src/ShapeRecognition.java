@@ -6,6 +6,7 @@ import java.awt.image.WritableRaster;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 public class ShapeRecognition
 {
@@ -65,7 +66,7 @@ public class ShapeRecognition
 				//detect every Rectangle
 				rr.detectRectangle(imageRaster, 4, imageRaster.getMinX(), imageRaster.getMinY(), testPoints);
 
-				testPoints = new ArrayList<>();
+				//testPoints = new ArrayList<>();
 
 				//detect every Ellipse
 				//Point p = er.detectTopEdgeLeftPoint(imageRaster, imageRaster.getMinX()+2, imageRaster.getMinY(), testPoints);
@@ -74,8 +75,10 @@ public class ShapeRecognition
 				//Point p = er.detectLeftEdgeTopPoint(imageRaster, imageRaster.getMinX(), imageRaster.getMinY()+2, testPoints);
 				//ArrayList<Point> points = er.detectLeftEdgeBottomPoints(imageRaster, p.x, p.y);
 				//ArrayList<EllipseVerticalEdgePair> test = er.findVerticalEdgePairs(imageRaster, imageRaster.getMinX(), imageRaster.getMinY(), testPoints);
-				ArrayList<EllipseHorizontalEdgePair> test = er.findHortizontalEdgePairs(imageRaster, imageRaster.getMinX(), imageRaster.getHeight(), testPoints);
-				System.out.println(test);
+				//ArrayList<EllipseHorizontalEdgePair> test = er.findHortizontalEdgePairs(imageRaster, imageRaster.getMinX(), imageRaster.getHeight(), testPoints);
+				er.detectEllipse(imageRaster);
+				List<Ellipse> detectedEllipses = er.detectedEllipses;
+				System.out.println(detectedEllipses);
 			}
 
 			catch (IOException e)

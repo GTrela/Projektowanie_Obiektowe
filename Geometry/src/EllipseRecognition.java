@@ -257,4 +257,51 @@ public class EllipseRecognition
 
 		return horizontalEdgePairs;
 	}
+
+	public boolean detectEllipse(Raster imageRaster)
+    {
+        boolean detectFlag = false;
+
+        ArrayList<Point> skipPoints = new ArrayList<>();
+
+        ArrayList<EllipseVerticalEdgePair> ellipseVerticalEdgePairs = findVerticalEdgePairs(imageRaster, imageRaster.getMinX(), imageRaster.getMinY(), skipPoints);
+
+        skipPoints = new ArrayList<>();
+
+        ArrayList<EllipseHorizontalEdgePair> ellipseHorizontalEdgePairs = findHortizontalEdgePairs(imageRaster, imageRaster.getMinX(), imageRaster.getHeight(), skipPoints);;
+
+        for (EllipseVerticalEdgePair verticalEdgePair : ellipseVerticalEdgePairs)
+        {
+            for (EllipseHorizontalEdgePair horizontalEdgePair : ellipseHorizontalEdgePairs)
+            {
+                Point center = new Point(((int) (verticalEdgePair.getTopEdgeLeft().x + verticalEdgePair.getTopEdgeRight().x))/2,
+                            (int)(verticalEdgePair.getTopEdgeLeft().y + verticalEdgePair.getBottomEdgeLeft().y)/2);
+
+                Point centerLeftEdge = new Point( (int) (horizontalEdgePair.getLeftEdgeBottom().x + horizontalEdgePair.getLeftEdgeTop().x)/2,
+                                (int) (horizontalEdgePair.getLeftEdgeBottom().y + horizontalEdgePair.getLeftEdgeTop().y)/2);
+
+                double d1 = Math.sqrt(  (center.x - horizontalEdgePair.getLeftEdgeTop().x)*(center.x - horizontalEdgePair.getLeftEdgeTop().x) +
+                        (center.y - horizontalEdgePair.getLeftEdgeTop().y)*(center.y - horizontalEdgePair.getLeftEdgeTop().y) );
+
+                double d2 = Math.sqrt( (horizontalEdgePair.getRightEdgeTop().x - center.x)*(horizontalEdgePair.getRightEdgeTop().x - center.x) +
+                        (horizontalEdgePair.getRightEdgeTop().y - center.y)*(horizontalEdgePair.getRightEdgeTop().y - center.y) );
+
+                double d_left1 = Math.sqrt ( (centerLeftEdge.x - verticalEdgePair.getTopEdgeLeft().x)*(centerLeftEdge.x - verticalEdgePair.getTopEdgeLeft().x) +
+                        (centerLeftEdge.y - verticalEdgePair.getTopEdgeLeft().y)*(centerLeftEdge.y - verticalEdgePair.getTopEdgeLeft().y));
+
+                double d_left2 = Math.sqrt( (centerLeftEdge.x - verticalEdgePair.getBottomEdgeLeft().x)*(centerLeftEdge.x - verticalEdgePair.getBottomEdgeLeft().x) +
+                        (centerLeftEdge.y - verticalEdgePair.getBottomEdgeLeft().y)*(centerLeftEdge.y - verticalEdgePair.getBottomEdgeLeft().y));
+
+                if (Math.abs(d1-d2) <= 2 && Math.abs(d_left1-d_left2) <=2)
+                {
+                    detectFlag = true;
+
+                    detectedEllipses.add(new Ellipse(verticalEdgePair.getTopEdgeLeft(), verticalEdgePair.getTopEdgeRight(), verticalEdgePair.getBottomEdgeLeft(), verticalEdgePair.getBottomEdgeRight(),
+                                        horizontalEdgePair.getLeftEdgeTop(), horizontalEdgePair.getLeftEdgeBottom(), horizontalEdgePair.getRightEdgeTop(), horizontalEdgePair.getRightEdgeBottom()));
+                }
+            }
+        }
+
+        return detectFlag;
+    }
 }
