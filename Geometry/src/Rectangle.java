@@ -4,6 +4,17 @@ import java.awt.*;
 
 public class Rectangle
 {
+	@Override
+	public String toString()
+	{
+		return "Rectangle\n{" +
+				"TopLeft=" + TopLeft +
+				"\nTopRight=" + TopRight +
+				"\nBottomLeft=" + BottomLeft +
+				"\nBottomRight=" + BottomRight +
+				"}\n";
+	}
+
 	Point TopLeft;
     Point TopRight;
     Point BottomLeft;
