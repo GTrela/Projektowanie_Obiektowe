@@ -258,7 +258,7 @@ public class EllipseRecognition
 		return horizontalEdgePairs;
 	}
 
-	public boolean detectEllipse(Raster imageRaster)
+	public boolean detectEllipses(Raster imageRaster)
     {
         boolean detectFlag = false;
 
@@ -304,4 +304,9 @@ public class EllipseRecognition
 
         return detectFlag;
     }
+
+	public List<Ellipse> getDetectedEllipses()
+	{
+		return detectedEllipses;
+	}
 }

@@ -7,7 +7,7 @@ public class RectangleRecognition
 {
     List<Rectangle> detectedRectangles = new ArrayList<>();
 
-    public boolean detectRectangle(Raster imageRaster, int tolerance, int startX, int startY, ArrayList<Point> skipPoints)
+    public boolean detectRectangles(Raster imageRaster, int tolerance, int startX, int startY, ArrayList<Point> skipPoints)
     {
         Point TopLeft, BottomRight;
         ArrayList<Point> BottomLeft, TopRight;
@@ -192,5 +192,10 @@ public class RectangleRecognition
         }
 
         return new Point(topRight.x, bottomLeft.y);
+    }
+
+    public List<Rectangle> getDetectedRectangles()
+    {
+        return detectedRectangles;
     }
 }
