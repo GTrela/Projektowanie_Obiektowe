@@ -33,7 +33,7 @@ public class Placement
 	{
 		// test for Top Left Point
 		if (PointInsideSquareBetween2Points(rectangle2.getTopLeft(), rectangle1.getTopLeft(), rectangle1.getBottomRight())
-				&& (Point1Between2Points(rectangle2.getTopLeft(), rectangle1.getTopLeft(), rectangle1.getBottomRight())))
+				&& !(Point1Between2Points(rectangle2.getTopLeft(), rectangle1.getTopLeft(), rectangle1.getBottomRight())))
 		{
 			return true;
 		}
