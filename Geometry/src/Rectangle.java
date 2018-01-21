@@ -78,8 +78,7 @@ public class Rectangle
 	@Override
 	public String toString()
 	{
-		return "Prostokąt {" +
-				"\nLewy górny róg = (" + TopLeft.x + ", " + TopLeft.y + ")" +
+		return "{ Lewy górny róg = (" + TopLeft.x + ", " + TopLeft.y + ")" +
 				"\nPrawy góry róg = (" + TopRight.x + ", " + TopRight.y + ")" +
 				"\nLewy dolny róg = (" + BottomLeft.x + ", " + BottomLeft.y + ")" +
 				"\nPrawy dolny róg = (" + BottomRight.x + ", " + BottomRight.y + ")" +

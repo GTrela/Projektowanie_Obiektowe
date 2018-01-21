@@ -85,7 +85,7 @@ public class Ellipse
         double a = distanceBetweenTwoPoints(centerTop, ellipseCenter);
         double b = distanceBetweenTwoPoints(centerLeft, ellipseCenter);
 
-        return "Elipsa { Środek = (" + ellipseCenter.x + ", " + ellipseCenter.y + ")" +
+        return "{ Środek = (" + ellipseCenter.x + ", " + ellipseCenter.y + ")" +
                 ", a = " + a +
                 ", b = " + b +
                 " }\n";
