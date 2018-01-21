@@ -56,6 +56,7 @@ public class ShapeRecognition
 			{
 				ShapeRecognition sr = new ShapeRecognition();
 				RectangleRecognition rr = new RectangleRecognition();
+				EllipseRecognition er = new EllipseRecognition();
 				Raster imageRaster = sr.loadImageRaster(imageFilePath);
 				sr.printRasterImage(imageRaster);
 
@@ -64,20 +65,13 @@ public class ShapeRecognition
 				//detect every Rectangle
 				rr.detectRectangle(imageRaster, 4, imageRaster.getMinX(), imageRaster.getMinY(), testPoints);
 
-				WritableRaster wr = Raster.createWritableRaster(imageRaster.getSampleModel(), imageRaster.getDataBuffer(), null);
+				testPoints = new ArrayList<>();
 
-				System.out.println("\n\n");
+				//detect every Ellipse
+				//Point p = er.detectTopEdgeLeftPoint(imageRaster, imageRaster.getMinX()+2, imageRaster.getMinY(), testPoints);
+				//ArrayList<Point> points = er.detectTopEdgeRightPoints(imageRaster, p.x, p.y);
 
-				// delete detected rectangles from the Raster
-				for (Rectangle rect : rr.detectedRectangles)
-				{
-					for (Point pt : rect.getPoints())
-					{
-						wr.setSample(pt.x, pt.y, 0, 1);
-					}
-				}
-
-				sr.printRasterImage(wr);
+				ArrayList<EllipseVerticalEdgePair> test = er.findVerticalEdgePairs(imageRaster, imageRaster.getMinX(), imageRaster.getMinY(), testPoints);
 			}
 
 			catch (IOException e)
