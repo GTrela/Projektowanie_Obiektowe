@@ -109,14 +109,14 @@ public class EllipseRecognition
 					Point p1 = null;
 					Point p2 = null;
 
-					if ((imageRaster.getSample(TopEdgeLeft.x - 1, y - 1, 0) == 0)
+					if ((imageRaster.getSample(TopEdgeLeft.x, y, 0) == 1) && (imageRaster.getSample(TopEdgeLeft.x - 1, y - 1, 0) == 0)
 							&& (imageRaster.getSample(TopEdgeLeft.x, y - 1, 0) == 0) && (imageRaster.getSample(TopEdgeLeft.x + 1, y, 0) == 0)
 							&& (imageRaster.getSample(TopEdgeLeft.x + 2, y, 0) == 0))
 					{
 						p1 = new Point(TopEdgeLeft.x, y);
 					}
 
-					if ((imageRaster.getSample(TopEdgeRightPoint.x - 2, y, 0) == 0)
+					if ((imageRaster.getSample(TopEdgeRightPoint.x, y, 0) == 1) && (imageRaster.getSample(TopEdgeRightPoint.x - 2, y, 0) == 0)
 							&& (imageRaster.getSample(TopEdgeRightPoint.x - 1, y, 0) == 0) && (imageRaster.getSample(TopEdgeRightPoint.x, y - 1, 0) == 0)
 							&& (imageRaster.getSample(TopEdgeRightPoint.x + 1, y - 1, 0) == 0))
 					{
@@ -147,11 +147,13 @@ public class EllipseRecognition
 			{
 				if (!isSkipPoint(new Point(x, y), skipPoints))
 				{
-					if ((imageRaster.getSample(x, y - 1, 0) == 0)
+					if ((imageRaster.getSample(x, y, 0) == 1)
+							&& (imageRaster.getSample(x, y - 1, 0) == 0)
 							&& (imageRaster.getSample(x, y - 2, 0) == 0) && (imageRaster.getSample(x + 1, y, 0) == 0)
 							&& (imageRaster.getSample(x + 1, y + 1, 0) == 0))
 					{
 						Point detectLeftEdgeBottomPoint = new Point(x, y);
+						skipPoints.add(detectLeftEdgeBottomPoint);
 						return detectLeftEdgeBottomPoint;
 					}
 				}
@@ -161,22 +163,28 @@ public class EllipseRecognition
 		return null;
 	}
 
-	public ArrayList<Point> detectLeftEdgeTopPoints(Raster imageRaster, int LeftEdgeBottomX, int LeftEdgeBottomY)
+	public Point detectLeftEdgeTopPoint(Raster imageRaster, int LeftEdgeBottomX, int LeftEdgeBottomY)
 	{
-		ArrayList<Point> LeftEdgeTopPoints = new ArrayList<>();
-
-		for (int y = LeftEdgeBottomY + 1; y - 1 > 0; y--)
+		for (int y = LeftEdgeBottomY - 1; y - 3 > 0; y--)
 		{
-			if ((imageRaster.getSample(LeftEdgeBottomX, y + 1, 0) == 0)
-					&& (imageRaster.getSample(LeftEdgeBottomX, y + 2, 0) == 0) && (imageRaster.getSample(LeftEdgeBottomX + 1, y, 0) == 0)
-					&& (imageRaster.getSample(LeftEdgeBottomX + 1, y - 1, 0) == 0))
+			if (imageRaster.getSample(LeftEdgeBottomX, y, 0) == 0)
 			{
-				Point detectedLeftEdgeBottomPoint = new Point(LeftEdgeBottomX, y);
-				LeftEdgeTopPoints.add(detectedLeftEdgeBottomPoint);
+				if ((imageRaster.getSample(LeftEdgeBottomX, y - 1, 0) == 0)
+						&& (imageRaster.getSample(LeftEdgeBottomX, y - 2, 0) == 1)
+						&& (imageRaster.getSample(LeftEdgeBottomX + 1, y - 2, 0) == 0)
+						&& (imageRaster.getSample(LeftEdgeBottomX + 1, y - 3, 0) == 0))
+				{
+					Point detectedLeftEdgeTopPoint = new Point(LeftEdgeBottomX, y - 2);
+					return detectedLeftEdgeTopPoint;
+				}
+			}
+			else
+			{
+				break;
 			}
 		}
 
-		return LeftEdgeTopPoints;
+		return null;
 	}
 
 
@@ -203,56 +211,48 @@ public class EllipseRecognition
 	public ArrayList<EllipseHorizontalEdgePair> findHortizontalEdgePairs(Raster imageRaster, int startX, int startY, ArrayList<Point> skipPoints)
 	{
 		Point LeftEdgeBottom;
+		Point LeftEdgeTop;
 		ArrayList<EllipseHorizontalEdgePair> horizontalEdgePairs = new ArrayList<>();
-		ArrayList<Point> LeftEdgeTopPoints = new ArrayList<>();
 
 		LeftEdgeBottom = detectLeftEdgeBottomPoint(imageRaster, startX, startY - 2, skipPoints);
-		LeftEdgeTopPoints = detectLeftEdgeTopPoints(imageRaster, LeftEdgeBottom.x, LeftEdgeBottom.y);
 
-		while (LeftEdgeBottom != null && !LeftEdgeTopPoints.isEmpty())
+		while (LeftEdgeBottom != null)
 		{
-			for (Point pt : LeftEdgeTopPoints)
+			// search for potential top right edge points
+			LeftEdgeTop = detectLeftEdgeTopPoint(imageRaster, LeftEdgeBottom.x, LeftEdgeBottom.y);
+
+			if (LeftEdgeTop != null)
 			{
-				if (checkVerticalContinuity(imageRaster, LeftEdgeBottom, pt))
+				for (int x = LeftEdgeBottom.x; x < imageRaster.getWidth(); x++)
 				{
-					for (int x = LeftEdgeBottom.x; x < imageRaster.getWidth(); x++)
+					Point RightEdgeBottom = null;
+					Point RightEdgeTop = null;
+
+					if ((imageRaster.getSample(x, LeftEdgeBottom.y, 0) == 1) && (imageRaster.getSample(x, LeftEdgeBottom.y - 1, 0) == 0)
+							&& (imageRaster.getSample(x, LeftEdgeBottom.y - 2, 0) == 0) && (imageRaster.getSample(x - 1, LeftEdgeBottom.y, 0) == 0)
+							&& (imageRaster.getSample(x - 1, LeftEdgeBottom.y + 1, 0) == 0))
 					{
-						Point p1 = null;
-						Point p2 = null;
+						RightEdgeBottom = new Point(x, LeftEdgeBottom.y);
+					}
 
-						if ((imageRaster.getSample(x - 1, LeftEdgeBottom.y, 0) == 0)
-								&& (imageRaster.getSample(x - 1, LeftEdgeBottom.y - 1, 0) == 0) && (imageRaster.getSample(x, LeftEdgeBottom.y + 1, 0) == 0)
-								&& (imageRaster.getSample(x, LeftEdgeBottom.y + 2, 0) == 0))
-						{
-							p1 = new Point(x, LeftEdgeBottom.y);
-						}
+					if ((imageRaster.getSample(x, LeftEdgeTop.y, 0) == 1) && (imageRaster.getSample(x, LeftEdgeTop.y + 1, 0) == 0)
+							&& (imageRaster.getSample(x, LeftEdgeTop.y + 2, 0) == 0) && (imageRaster.getSample(x - 1, LeftEdgeTop.y, 0) == 0)
+							&& (imageRaster.getSample(x - 1, LeftEdgeTop.y - 1, 0) == 0))
+					{
+						RightEdgeTop = new Point(x, LeftEdgeTop.y);
+					}
 
-						if ((imageRaster.getSample(x, pt.y - 1, 0) == 0)
-								&& (imageRaster.getSample(x, pt.y - 2, 0) == 0) && (imageRaster.getSample(x - 1, pt.y, 0) == 0)
-								&& (imageRaster.getSample(x - 1, pt.y + 1, 0) == 0))
+					if (RightEdgeBottom != null && RightEdgeTop != null)
+					{
+						if (checkVerticalContinuity(imageRaster, RightEdgeBottom, RightEdgeTop))
 						{
-							p2 = new Point(x, pt.y);
-						}
-
-						if (p1 != null && p2 != null)
-						{
-							if (checkVerticalContinuity(imageRaster, p1, p2))
-							{
-								horizontalEdgePairs.add(new EllipseHorizontalEdgePair(pt, LeftEdgeBottom, p2, p1));
-							}
+							horizontalEdgePairs.add(new EllipseHorizontalEdgePair(LeftEdgeTop, LeftEdgeBottom, RightEdgeTop, RightEdgeBottom));
 						}
 					}
 				}
 			}
 
-			if (!LeftEdgeTopPoints.isEmpty())
-			{
-				skipPoints.add(LeftEdgeBottom);
-			}
-
 			LeftEdgeBottom = detectLeftEdgeBottomPoint(imageRaster, startX, startY - 2, skipPoints);
-			LeftEdgeTopPoints = detectLeftEdgeTopPoints(imageRaster, LeftEdgeBottom.x, LeftEdgeBottom.y);
-
 		}
 
 		return horizontalEdgePairs;
