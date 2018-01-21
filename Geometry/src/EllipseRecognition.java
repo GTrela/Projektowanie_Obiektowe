@@ -22,13 +22,13 @@ public class EllipseRecognition
 
     public Point detectTopEdgeLeftPoint(Raster imageRaster, int startX, int startY, ArrayList<Point> skipPoints)
     {
-        for (int y = startY; y < imageRaster.getHeight(); y++)
+        for (int y = startY; y+1 < imageRaster.getHeight(); y++)
         {
-            for (int x = startX; x < imageRaster.getWidth(); x++)
+            for (int x = startX; x+2 < imageRaster.getWidth(); x++)
             {
                 if (!isSkipPoint(new Point(x,y), skipPoints))
                 {
-                    if ((imageRaster.getSample(x,y,0) == 1) && (imageRaster.getSample(x-1,y+1, 0) == 0)
+                    if ((imageRaster.getSample(x-1,y+1, 0) == 0)
                             && (imageRaster.getSample(x,y+1, 0) == 0) && (imageRaster.getSample(x+1,y, 0) == 0)
                             && (imageRaster.getSample(x+2,y, 0) == 0))
                     {
@@ -46,9 +46,9 @@ public class EllipseRecognition
     {
         ArrayList<Point> TopEdgeRightPoints = new ArrayList<>();
 
-        for (int x = TopEdgeLeftX + 1; x < imageRaster.getWidth(); x++)
+        for (int x = TopEdgeLeftX + 1; x+1 < imageRaster.getWidth(); x++)
         {
-            if ((imageRaster.getSample(x,TopEdgeLeftY,0) == 1) && (imageRaster.getSample(x-2,TopEdgeLeftY, 0) == 0)
+            if ((imageRaster.getSample(x-2,TopEdgeLeftY, 0) == 0)
                     && (imageRaster.getSample(x-1,TopEdgeLeftY, 0) == 0) && (imageRaster.getSample(x,TopEdgeLeftY+1, 0) == 0)
                     && (imageRaster.getSample(x+1,TopEdgeLeftY+1, 0) == 0))
             {
@@ -100,14 +100,14 @@ public class EllipseRecognition
                         Point p1 = null;
                         Point p2 = null;
 
-                        if ((imageRaster.getSample(TopEdgeLeft.x,y,0) == 1) && (imageRaster.getSample(TopEdgeLeft.x-1,y-1, 0) == 0)
+                        if ((imageRaster.getSample(TopEdgeLeft.x-1,y-1, 0) == 0)
                                 && (imageRaster.getSample(TopEdgeLeft.x,y-1, 0) == 0) && (imageRaster.getSample(TopEdgeLeft.x+1,y, 0) == 0)
                                 && (imageRaster.getSample(TopEdgeLeft.x+2,y, 0) == 0))
                         {
                             p1 = new Point(TopEdgeLeft.x,y);
                         }
 
-                        if ((imageRaster.getSample(pt.x,y,0) == 1) && (imageRaster.getSample(pt.x-2,y, 0) == 0)
+                        if ((imageRaster.getSample(pt.x-2,y, 0) == 0)
                                 && (imageRaster.getSample(pt.x-1,y, 0) == 0) && (imageRaster.getSample(pt.x,y-1, 0) == 0)
                                 && (imageRaster.getSample(pt.x+1,y-1, 0) == 0))
                         {
@@ -139,19 +139,17 @@ public class EllipseRecognition
 
     public Point detectLeftEdgeBottomPoint(Raster imageRaster, int startX, int startY, ArrayList<Point> skipPoints)
     {
-        for (int x = startX; x < imageRaster.getWidth(); x++)
+        for (int x = startX; x+1 < imageRaster.getWidth(); x++)
         {
-            for (int y = startY; y > 0; y--)
+            for (int y = startY; y-2 > 0; y--)
             {
-                //System.out.println("X = " + x + " Y = " + y);
                 if (!isSkipPoint(new Point(x,y), skipPoints))
                 {
-                    if ((imageRaster.getSample(x,y,0) == 1) && (imageRaster.getSample(x,y-1, 0) == 0)
+                    if ((imageRaster.getSample(x,y-1, 0) == 0)
                             && (imageRaster.getSample(x,y-2, 0) == 0) && (imageRaster.getSample(x+1,y, 0) == 0)
                             && (imageRaster.getSample(x+1,y+1, 0) == 0))
                     {
                         Point detectLeftEdgeBottomPoint = new Point(x, y);
-                        System.out.println("X = " + x);
                         return detectLeftEdgeBottomPoint;
                     }
                 }
@@ -165,9 +163,9 @@ public class EllipseRecognition
     {
         ArrayList<Point> LeftEdgeTopPoints = new ArrayList<>();
 
-        for (int y = LeftEdgeBottomY + 1; y > 0; y--)
+        for (int y = LeftEdgeBottomY + 1; y-1 > 0; y--)
         {
-            if ((imageRaster.getSample(LeftEdgeBottomX,y,0) == 1) && (imageRaster.getSample(LeftEdgeBottomX,y+1, 0) == 0)
+            if ((imageRaster.getSample(LeftEdgeBottomX,y+1, 0) == 0)
                     && (imageRaster.getSample(LeftEdgeBottomX,y+2, 0) == 0) && (imageRaster.getSample(LeftEdgeBottomX+1,y, 0) == 0)
                     && (imageRaster.getSample(LeftEdgeBottomX+1,y-1, 0) == 0))
             {
@@ -221,14 +219,14 @@ public class EllipseRecognition
                         Point p1 = null;
                         Point p2 = null;
 
-                        if ((imageRaster.getSample(x,LeftEdgeBottom.y,0) == 1) && (imageRaster.getSample(x-1,LeftEdgeBottom.y, 0) == 0)
+                        if ((imageRaster.getSample(x-1,LeftEdgeBottom.y, 0) == 0)
                                 && (imageRaster.getSample(x-1,LeftEdgeBottom.y-1, 0) == 0) && (imageRaster.getSample(x,LeftEdgeBottom.y+1, 0) == 0)
                                 && (imageRaster.getSample(x,LeftEdgeBottom.y+2, 0) == 0))
                         {
                             p1 = new Point(x,LeftEdgeBottom.y);
                         }
 
-                        if ((imageRaster.getSample(x,pt.y,0) == 1) && (imageRaster.getSample(x,pt.y-1, 0) == 0)
+                        if ((imageRaster.getSample(x,pt.y-1, 0) == 0)
                                 && (imageRaster.getSample(x,pt.y-2, 0) == 0) && (imageRaster.getSample(x-1,pt.y, 0) == 0)
                                 && (imageRaster.getSample(x-1,pt.y+1, 0) == 0))
                         {
