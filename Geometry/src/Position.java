@@ -1,9 +1,8 @@
 import java.awt.*;
-import java.util.ArrayList;
 
-public class Placement
+public class Position
 {
-	public static boolean R1ContatinsR2(Rectangle rectangle1, Rectangle rectangle2)
+	public static boolean R1InsideR2(Rectangle rectangle1, Rectangle rectangle2)
 	{
 		if (Point1Between2Points(rectangle2.getTopLeft(), rectangle1.getTopLeft(), rectangle1.getBottomRight())
 				&& (Point1Between2Points(rectangle2.getBottomRight(), rectangle1.getTopLeft(), rectangle1.getBottomRight())))
@@ -16,7 +15,7 @@ public class Placement
 		}
 	}
 
-	public static boolean R1InsideR2(Rectangle rectangle1, Rectangle rectangle2)
+	public static boolean R1ContainsR2(Rectangle rectangle1, Rectangle rectangle2)
 	{
 		if (PointInsideSquareBetween2Points(rectangle2.getTopLeft(), rectangle1.getTopLeft(), rectangle1.getBottomRight())
 				&& (PointInsideSquareBetween2Points(rectangle2.getBottomRight(), rectangle1.getTopLeft(), rectangle1.getBottomRight())))
@@ -61,7 +60,7 @@ public class Placement
 
 	public static boolean R1SharePointsR2(Rectangle rectangle1, Rectangle rectangle2)
 	{
-		if (R1InsideR2(rectangle1,rectangle2))
+		if (R1ContainsR2(rectangle1,rectangle2))
 		{
 			return false;
 		}

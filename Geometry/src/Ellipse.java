@@ -47,6 +47,27 @@ public class Ellipse
         return new Rectangle(TopLeft, TopRight, BottomLeft, BottomRight);
     }
 
+    public void translateByVector(Point vector)
+    {
+        this.TopEdgeLeft.x += vector.x;
+        this.TopEdgeRight.x += vector.x;
+        this.BottomEdgeLeft.x += vector.x;
+        this.BottomEdgeRight.x += vector.x;
+        this.LeftEdgeTop.x += vector.x;
+        this.LeftEdgeBottom.x += vector.x;
+        this.RightEdgeTop.x += vector.x;
+        this.RightEdgeBottom.x += vector.x;
+
+        this.TopEdgeLeft.y += vector.y;
+        this.TopEdgeRight.y += vector.y;
+        this.BottomEdgeLeft.y += vector.y;
+        this.BottomEdgeRight.y += vector.y;
+        this.LeftEdgeTop.y += vector.y;
+        this.LeftEdgeBottom.y += vector.y;
+        this.RightEdgeTop.y += vector.y;
+        this.RightEdgeBottom.y += vector.y;
+    }
+
     public static class EllipseBuilder
     {
         // Top Edge
