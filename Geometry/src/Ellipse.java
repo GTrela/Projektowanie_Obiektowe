@@ -37,6 +37,16 @@ public class Ellipse
         this.RightEdgeBottom = RightEdgeBottom;
     }
 
+    public Rectangle getFramingRectangle()
+    {
+        Point TopLeft = new Point(LeftEdgeTop.x, TopEdgeLeft.y);
+        Point TopRight = new Point(RightEdgeTop.x, TopEdgeRight.y);
+        Point BottomLeft = new Point(LeftEdgeBottom.x, BottomEdgeLeft.y);
+        Point BottomRight = new Point(RightEdgeBottom.x, BottomEdgeRight.y);
+
+        return new Rectangle(TopLeft, TopRight, BottomLeft, BottomRight);
+    }
+
     public static class EllipseBuilder
     {
         // Top Edge
