@@ -68,6 +68,8 @@ public class ShapeRecognition
 				//detect every Ellipse
 				er.detectEllipses(imageRaster);
 
+				System.out.println(er.getDetectedEllipses().get(0).toString());
+				System.out.println(rr.getDetectedRectangles().get(0).toString());
 
 			}
 

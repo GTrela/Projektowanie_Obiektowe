@@ -68,6 +68,29 @@ public class Ellipse
         this.RightEdgeBottom.y += vector.y;
     }
 
+    public double distanceBetweenTwoPoints(Point p1, Point p2)
+    {
+        return Math.sqrt((p2.x-p1.x)*(p2.x-p1.x) + (p2.y-p1.y)*(p2.y-p1.y));
+    }
+
+    @Override
+    public String toString()
+    {
+        Point ellipseCenter = new Point(((int) (TopEdgeLeft.x + TopEdgeRight.x))/2,
+                (int)(TopEdgeLeft.y + BottomEdgeLeft.y)/2);
+
+        Point centerTop = new Point((int)((TopEdgeLeft.x + TopEdgeRight.x)/2), (int)((TopEdgeLeft.y + TopEdgeRight.y)/2));
+        Point centerLeft = new Point((int)((LeftEdgeBottom.x + LeftEdgeTop.x)/2), (int)((LeftEdgeBottom.y + LeftEdgeTop.y)/2));
+
+        double a = distanceBetweenTwoPoints(centerTop, ellipseCenter);
+        double b = distanceBetweenTwoPoints(centerLeft, ellipseCenter);
+
+        return "Elipsa { Środek = (" + ellipseCenter.x + ", " + ellipseCenter.y + ")" +
+                ", a = " + a +
+                ", b = " + b +
+                " }\n";
+    }
+
     public static class EllipseBuilder
     {
         // Top Edge
