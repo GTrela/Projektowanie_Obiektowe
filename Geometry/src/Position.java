@@ -30,27 +30,29 @@ public class Position
 
 	public static boolean R1TangencyR2(Rectangle rectangle1, Rectangle rectangle2)
 	{
+		Point topLeftPoint = new Point (rectangle1.getTopLeft().x-1,rectangle1.getTopLeft().y-1);
+		Point bottomRightPoint = new Point (rectangle1.getBottomRight().x+1,rectangle1.getBottomRight().y+1);
 		// test for Top Left Point
-		if (PointInsideSquareBetween2Points(rectangle2.getTopLeft(), rectangle1.getTopLeft(), rectangle1.getBottomRight())
-				&& !(Point1Between2Points(rectangle2.getTopLeft(), rectangle1.getTopLeft(), rectangle1.getBottomRight())))
+		if (PointInsideSquareBetween2Points(rectangle2.getTopLeft(), topLeftPoint, bottomRightPoint)
+				&& !(Point1Between2Points(rectangle2.getTopLeft(), topLeftPoint, bottomRightPoint)))
 		{
 			return true;
 		}
 		//test for Top Right Point
-		if (PointInsideSquareBetween2Points(rectangle2.getTopRight(), rectangle1.getTopLeft(), rectangle1.getBottomRight())
-				&& !(Point1Between2Points(rectangle2.getTopRight(), rectangle1.getTopLeft(), rectangle1.getBottomRight())))
+		if (PointInsideSquareBetween2Points(rectangle2.getTopRight(), topLeftPoint, bottomRightPoint)
+				&& !(Point1Between2Points(rectangle2.getTopRight(), topLeftPoint, bottomRightPoint)))
 		{
 			return true;
 		}
 		//test for Bottom Left Point
-		if (PointInsideSquareBetween2Points(rectangle2.getBottomLeft(), rectangle1.getTopLeft(), rectangle1.getBottomRight())
-				&& !(Point1Between2Points(rectangle2.getBottomLeft(), rectangle1.getTopLeft(), rectangle1.getBottomRight())))
+		if (PointInsideSquareBetween2Points(rectangle2.getBottomLeft(), topLeftPoint, bottomRightPoint)
+				&& !(Point1Between2Points(rectangle2.getBottomLeft(), topLeftPoint, bottomRightPoint)))
 		{
 			return true;
 		}
 		//test for Bottom Right Point
-		if (PointInsideSquareBetween2Points(rectangle2.getBottomRight(), rectangle1.getTopLeft(), rectangle1.getBottomRight())
-				&& !(Point1Between2Points(rectangle2.getBottomRight(), rectangle1.getTopLeft(), rectangle1.getBottomRight())))
+		if (PointInsideSquareBetween2Points(rectangle2.getBottomRight(), topLeftPoint, bottomRightPoint)
+				&& !(Point1Between2Points(rectangle2.getBottomRight(), topLeftPoint, bottomRightPoint)))
 		{
 			return true;
 		}
