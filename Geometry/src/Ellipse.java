@@ -37,6 +37,46 @@ public class Ellipse
         this.RightEdgeBottom = RightEdgeBottom;
     }
 
+    public Point getTopEdgeLeft()
+    {
+        return TopEdgeLeft;
+    }
+
+    public Point getTopEdgeRight()
+    {
+        return TopEdgeRight;
+    }
+
+    public Point getBottomEdgeLeft()
+    {
+        return BottomEdgeLeft;
+    }
+
+    public Point getBottomEdgeRight()
+    {
+        return BottomEdgeRight;
+    }
+
+    public Point getLeftEdgeTop()
+    {
+        return LeftEdgeTop;
+    }
+
+    public Point getLeftEdgeBottom()
+    {
+        return LeftEdgeBottom;
+    }
+
+    public Point getRightEdgeTop()
+    {
+        return RightEdgeTop;
+    }
+
+    public Point getRightEdgeBottom()
+    {
+        return RightEdgeBottom;
+    }
+
     public Rectangle getFramingRectangle()
     {
         Point TopLeft = new Point(LeftEdgeTop.x, TopEdgeLeft.y);
