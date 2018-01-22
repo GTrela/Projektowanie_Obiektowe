@@ -62,6 +62,10 @@ public class Position
 
 	public static boolean R1SharePointsR2(Rectangle rectangle1, Rectangle rectangle2)
 	{
+		if (R1InsideR2(rectangle1,rectangle2) || R1InsideR2(rectangle2,rectangle1))
+		{
+			return false;
+		}
 		if ((rectangle1.getTopLeft().x > rectangle2.getBottomRight().x) ||
 				(rectangle1.getBottomRight().x  < rectangle2.getTopLeft().x) ||
 				(rectangle1.getTopLeft().y > rectangle2.getBottomRight().y) ||
