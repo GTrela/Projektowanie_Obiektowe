@@ -380,7 +380,7 @@ public class ShapeRecognition
 
 			catch (IOException e)
 			{
-				System.out.println("Couldn't open file:" + args[0]);
+				System.out.println("Nie można było otworzyć pliku: " + args[0]);
 				e.printStackTrace();
 			}
 		}
