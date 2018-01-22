@@ -20,7 +20,7 @@ class PositionTest {
     void r1TangencyR2()
     {
         Rectangle rect1 = new Rectangle(new Point(0,0), new Point(20,0), new Point(0,50), new Point(20,50));
-        Rectangle rect2 = new Rectangle(new Point(20,0), new Point(40,0), new Point(20,20), new Point(40,20));
+        Rectangle rect2 = new Rectangle(new Point(21,0), new Point(40,0), new Point(21,20), new Point(40,20));
 
         assertTrue(Position.R1TangencyR2(rect1,rect2));
     }
